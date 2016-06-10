@@ -1,0 +1,63 @@
+TABELAS:
+
+
+---------------------------------------------------------------------------------------
+BOLETOS:
+
+  `tipo_fatura` int(1) DEFAULT NULL,  ==> 1 - Contas a Receber / 2 - Contas a Pagar
+  
+------------------------------  // ----------------------------------------------------
+
+CONTAS A RECEBER
+
+  `nr_pedido` int(11) DEFAULT NULL,  		=> Numero do Pedido da Venda Faturada
+  `nr_documento` varchar(20) DEFAULT NULL 	=> Numero do Documento de Contas a Receber
+  `nr_nfs` varchar(9) DEFAULT NULL 			=> Numero da Nota Fiscal de Servicos
+  `nr_bordero` varchar(8) DEFAULT NULL,		=> Numero do Bordero do Contrato de Serviços
+  `forma_pagamento` int(3) NOT NULL,        => Forma de Pagamento da Cobrança do Debito - 1-2-3-4
+  `local_pagamento` int(3) NOT NULL,        => Local de Pagamento do Debito - 1:Carteira - 2: Banco
+  `id_conta` int(11) DEFAULT NULL,          => Identificação da Conta Bancaria do Pagamento
+
+------------------------------  // ----------------------------------------------------
+
+FATURAS A RECEBER   
+
+  `tipo_fatura` int(1) DEFAULT NULL,        => 1 = Cobrança com Juros - 2 = Cobrança sem Juros 
+
+------------------------------  // ----------------------------------------------------
+
+histmov_bancario
+
+`tipo_movimento` int(1) DEFAULT NULL,       => 1 = Credito - 2 - Debito
+`especie_movto` varchar(10) DEFAULT NULL    => Controla se o movimento é automatico / 0 - Editar.
+
+------------------------------  // ----------------------------------------------------
+
+histmov_caixa
+
+`tipo_movimento` int(1) DEFAULT NULL,       => 1 = Credito - 2 - Debito
+`especie_movto` varchar(10) DEFAULT NULL    => Controla se o movimento é automatico / 0 - Editar.
+
+------------------------------  // ----------------------------------------------------
+
+movimento_bancario
+
+  `tipo_movimento` int(1) DEFAULT NULL,    => 1 = Credito - 2 - Debito
+  `tipo_documento` int(1) DEFAULT NULL,
+  `nr_documento` varchar(10) DEFAULT NULL,
+  `id_documento` int(11) DEFAULT NULL,
+  `movcxa` int(1) DEFAULT NULL,            => 1 = Não - 2 - Sim
+  `conciliado` int(1) DEFAULT NULL,        => 0 = Não - 1 - Sim 
+
+------------------------------  // ----------------------------------------------------
+movimento_caixa
+
+  `tipo_movimento` int(1) DEFAULT NULL,    => 1 = Credito - 2 - Debito
+  `tipo_documento` int(1) DEFAULT NULL,    
+  `nr_documento` varchar(10) DEFAULT NULL,
+  `id_documento` int(11) DEFAULT NULL,  
+  `movbco` int(1) DEFAULT NULL,            => 1 = Não - 2 - Sim
+  `id_conta` int(11) DEFAULT NULL,         => Conta Bancaria movimentada
+  `id_histbco` int(3) DEFAULT NULL,        => Historico Bancario do movimento 
+  `conciliado` int(1) DEFAULT NULL,        => 0 = Não - 1 - Sim 
+

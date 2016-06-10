@@ -1,0 +1,53 @@
+#modal_auth_app .modal-dialog{
+	width:315px!important;
+}
+
+.input-app .form-control input{
+	width:50px!important;
+
+}
+
+.input-app {
+
+	display:inline-block!important;
+}
+
+.auth-loading {
+	height: 21px;
+	width: 56px;
+	background: url( '../images/auth-loading.gif' );
+	background-repeat: no-repeat;
+	background-position: center center;
+	display:none;
+}
+
+
+.skin-blue .busca-rbac-form {
+	
+    color:#FFFFFF!important;
+    margin: 10px!important;
+	
+}
+.skin-blue .busca-rbac-form input {
+	
+    color:#b8c7ce!important;
+    background-color:#1a2226!important;
+	border-color: #b8c7ce!important;
+}
+
+.skin-blue .busca-rbac-form input:hover {
+	
+    color:#b8c7ce!important;
+    background-color:#1a2225!important;
+	border-color: #FFFFFF!important;
+}
+.busca-rbac-form, .sidebar-menu > li.header {
+    overflow: none!important;
+    text-overflow: none!important;
+}
+
+.busca-rbac-form label{
+	
+	color:#b8c7ce!important;
+	
+}

@@ -1,0 +1,46 @@
+.box-cupom {
+	float: left;
+	background-color: #FFFACE;
+	font-size: 11px;	
+}
+
+.box-cupom-cabecalho {
+	font-weight: bold;
+}
+.box-cupom-cabecalho .campos {
+	border-bottom: 1px solid;
+	margin-bottom: 10px;
+}
+.box-cupom-itens {
+	float: left;
+	height: 285px;
+	overflow-y: auto;
+}
+.box-cupom-itens .item {
+	border-bottom: 1px dashed;
+	margin-bottom: 15px;	
+}
+.box-cupom-itens .item .preco-antigo {
+	text-decoration: line-through;
+}
+.box-cupom-itens .item .desconto {
+	color: #ff0000;
+}
+
+.box-total {
+	float: left;
+	background-color: #6D6D6D;
+	color: #FFFFFF;
+}
+.box-total .total-label{
+	color: #F2F2F2;
+	font-weight: bold;
+}
+
+.btnFormaPagamento {
+	display: block;
+	width: 100%;
+	min-height: 55px;
+	vertical-align: middle;
+	white-space: normal;
+}

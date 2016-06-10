@@ -1,0 +1,40 @@
+.form-control {	
+	font-size: 12px;
+}
+
+.containerPedido {
+	font-size: 12px;
+}
+
+.boxPedidoItens {
+	height: 363px;
+	overflow-y: auto;
+}
+.tblPedidoItens {
+	font-size: 11px;
+	margin-left: 1px;
+	margin-right: 1px;
+}
+.tblPedidoItens .form-control {
+	font-size: 11px;
+	height: 24px;
+}
+.tblPedidoResumo .total {
+	font-size: 16px;
+}
+.btnRemProd {
+	font-size: 14px;
+}
+.resultado-item {
+    margin-bottom: 10px;
+    padding: 10px 5px;
+}
+/* AUMENTA O TAMANHO DO BOX DE RESULTADOS EXIBIDOS */
+.tt-scrollable-menu .tt-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+/* PERMITE A QUEBRA DE LINHA */
+.tt-menu .tt-suggestion {
+    white-space: normal;
+}

@@ -1,0 +1,11 @@
+header.main-header, aside.main-sidebar, section.content-header, footer.main-footer {
+	display: none;
+}
+section.content {
+	display: block;
+	min-width: 20cm;
+}
+
+.content-wrapper, .right-side, .main-footer {
+    margin-left: 0px;
+}
