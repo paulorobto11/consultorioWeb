@@ -6,8 +6,9 @@ use kartik\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
-use app\models\EmpresaGrupo;
+use app\models\Funcoes;
+use app\models\Cidade;
+use app\models\EstadoFederacao;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\EmpresaSearch */
@@ -47,43 +48,67 @@ $this->params['breadcrumbs'][] = $this->title;
         
     	<?php 
     	$gridColumns = [
-    	    [
-    	        'class'=>'kartik\grid\SerialColumn',
-    	        'header'=>'#',
-    	    ],
             [
                 'attribute'=>'id',
             ],
     		[
-    			'attribute'=>'empresa_grupo_id',
-                'value'=>function ($model) {
-                                $grupos = ArrayHelper::map(EmpresaGrupo::find()->all(), 'id', 'nome_grupo');
-                                return $grupos[$model->empresa_grupo_id];
-                            },
-    		],
-    		[
-    			'attribute'=>'identificacao',
-    		],
-    		[
-    			'attribute'=>'nome_fantasia',
-    		],
-    		[
     			'attribute'=>'razao_social',
     		],
+    		[
+    			'attribute'=>'cnpj',
+    			'value'=>function ($model, $key, $index, $widget) {
+    				$funcoes = new Funcoes();
+    				return $funcoes->mascaraCnpj($model->cnpj);
+    			},
+    				
+    		],
+    		[
+    			'attribute'=>'cidade',
+    			'value'=>function ($model, $key, $index, $widget) {
+    			    $cidade = Cidade::findOne(['id'=>$model->cidade]);
+    			    if (!empty($cidade)) {
+    					return $cidade->descricao;
+    			    } else {
+    			    	return '';
+    			    }
+    				},
+    				
+    		],
+    		[
+    			'attribute'=>'estado',
+    			'value'=>function ($model, $key, $index, $widget) {
+    			    $estado = EstadoFederacao::findOne(['id'=>$model->estado]);
+    			    if (!empty($estado)) {
+    					return $estado->unidade_federacao;
+    			    } else {
+    			    	return '';
+    			    }
+    			},
+    		],
+    		[
+    			'attribute'=>'telefone1',
+    			'value'=>function ($model, $key, $index, $widget) {
+    				$funcoes = new Funcoes();
+    				return $funcoes->mascaraFone($model->telefone1);
+    			},
+    		],
+    		[
+    			'attribute'=>'data_cadastro',
+    			'value'=>function ($model, $key, $index, $widget) {
+    				$funcoes = new Funcoes();
+    				return $funcoes->ajustaData($model->data_cadastro);
+    			},
+    		],
+    			
+    			
     		['class' => 'kartik\grid\ActionColumn',
-    		'template'=>'{update}{delete}',
+    		'template'=>'{update}',
             'buttons'=>[
                 'update' => function ($url, $model) {
                   return Html::a('<i class="fa fa-pencil"></i>', ['/empresa/update/' ,'id'=>$model->id], [
                     'class' => 'btn btn-sm btn-warning', 'title' => 'Atualizar','data-toggle'=>'tooltip',
                   ]);            
                 },
-                'delete' => function ($url, $model) {
-                  return Html::a('<i class="fa fa-trash"></i>', $url, [
-                    'class' => 'btn btn-sm btn-danger', 'title' => 'Remover','data-toggle'=>'tooltip',
-                    'data-method' => 'post', 'data-confirm' => 'Você tem certeza que deseja remover esse item?',
-                  ]);
-                }
               ]
     		],
     	];
@@ -100,10 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
     		'filterRowOptions'=>['class'=>'kartik-sheet-style'],
     		'pjax'=>true,
     		'toolbar'=> [
-    			['content'=>
-    					Html::a('Nova Empresa', ['create'], ['class' => 'btn btn-success', 'title' => 'Nova Empresa'])
-    			],
-    			'{toggleData}',
+//    			'{toggleData}',
     		],
     		'bordered'=>true,
     		'striped'=>true,

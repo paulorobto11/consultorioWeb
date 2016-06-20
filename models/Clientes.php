@@ -50,6 +50,14 @@ class Clientes extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
+	
+	public $file;
+	public $bsc_data_inicio;
+	public $bsc_data_final;
+	public $bsc_tipo;
+	public $bsc_cliente;
+	public $bsc_forma;
+	
     public static function tableName()
     {
         return 'clientes';
@@ -62,19 +70,18 @@ class Clientes extends \yii\db\ActiveRecord
     {
         return [
             [['codigo', 'nome'], 'required'],
-            [['codigo', 'sexo', 'estcivil', 'dddfone', 'fone', 'dddcel', 'celular', 'convenio', 'tipo'], 'integer'],
-            [['dtnascto', 'emissao', 'dtavalid', 'dtacons', 'dataultima', 'dtaproxima'], 'safe'],
+            [['codigo', 'sexo', 'estcivil',  'convenio', 'tipo'], 'integer'],
+            [['dtnascto', 'emissao', 'dtavalid', 'dddfone', 'fone', 'dddcel', 'celular','dtacons', 'dataultima', 'dtaproxima','cpf','cep'], 'safe'],
             [['vlrcons'], 'number'],
             [['nome', 'mae', 'pai', 'rua', 'email'], 'string', 'max' => 50],
             [['idade', 'sangue', 'ufemis', 'uf'], 'string', 'max' => 2],
             [['natural', 'profissao', 'formapgto', 'matricula'], 'string', 'max' => 20],
             [['conjuge'], 'string', 'max' => 40],
-            [['cpf'], 'string', 'max' => 11],
             [['rg'], 'string', 'max' => 25],
             [['orgao'], 'string', 'max' => 4],
             [['nroend'], 'string', 'max' => 8],
             [['bairro', 'cidade'], 'string', 'max' => 35],
-            [['cep'], 'string', 'max' => 10],
+        	[['file'],'file'],
         ];
     }
 

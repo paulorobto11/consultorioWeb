@@ -31,6 +31,12 @@ class Agenda extends \yii\db\ActiveRecord
 	public $bsc_data;
 	public $bsc_data_agenda;
 	public $bsc_medico;
+	public $nome_cliente;
+	public $bsc_data_inicio;
+	public $bsc_data_final;
+	public $bsc_tipo;
+	public $bsc_forma;
+	public $bsc_confirmada;
 	
     public static function tableName()
     {
@@ -44,10 +50,10 @@ class Agenda extends \yii\db\ActiveRecord
     {
         return [
             [['medico', 'codigo', 'tipo'], 'required'],
-            [['medico', 'codigo', 'tipo', 'fone', 'hora', 'confirmada', 'modopgto'], 'integer'],
+            [['medico', 'codigo', 'tipo', 'fone', 'hora', 'confirmada', ], 'integer'],
             [['data', 'inicio', 'final'], 'safe'],
             [['vlrpgto'], 'number'],
-            [['ddd'], 'string', 'max' => 2],
+            [['ddd','modopgto'], 'string', 'max' => 20],
         ];
     }
 
@@ -72,4 +78,5 @@ class Agenda extends \yii\db\ActiveRecord
             'vlrpgto' => 'Vlrpgto',
         ];
     }
+    
 }

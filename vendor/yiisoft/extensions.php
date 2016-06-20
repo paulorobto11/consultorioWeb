@@ -21,6 +21,17 @@ return array (
       '@kartik/money' => $vendorDir . '/kartik-v/yii2-money',
     ),
   ),
+		'yii-jpegcam-master' =>
+		array (
+				'name' => 'yii-jpegcam-master/demo-app',
+				'version' => '9999999-dev',
+				'alias' =>
+				array (
+						'@yii-jpegcam-master/demo-app' => $vendorDir . 'yii-jpegcam',
+				),
+		),
+		
+		
   'kartik-v/yii2-popover-x' => 
   array (
     'name' => 'kartik-v/yii2-popover-x',

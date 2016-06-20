@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\Url;
 
 /**
  * This is the model class for table "cargo".
@@ -112,6 +113,7 @@ class Funcoes extends \yii\db\ActiveRecord
 		$numero = str_replace('-', '', $numero);
 		$numero = str_replace('/', '', $numero);
 		$numero = str_replace('.', '', $numero);
+		$numero = str_replace(':', '', $numero);
 		$numero = str_replace(' ', '', $numero);
 		return ($numero);
 	}
@@ -161,5 +163,4 @@ class Funcoes extends \yii\db\ActiveRecord
 		$valor = $nro1.'-'.$nro2.'/'.$nro3;
 		return $valor;
 	}
-	
 }

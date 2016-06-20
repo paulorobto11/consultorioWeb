@@ -9,7 +9,7 @@ $this->title = 'Lembrete';
 ?>
 <div class="login-box  ">
     <div class="login-logo">
-    	<a href="../../index2.html"><i><b>Prefeitura</b></i> <b>Online</b></a>
+    	<a href="../../index2.html"><i><b>Consultorio</b></i> <b>Médico</b></a>
     </div>
     <!-- /.login-logo -->
 
@@ -22,74 +22,6 @@ $this->title = 'Lembrete';
             'options' => ['validateOnSubmit' => false,'class' => 'form-horizontal'],
 
         ]); ?>
-        
-		<?php
-			echo $form->field($model, 'tipo_identify',['template' => '{input} <span class="glyphicon glyphicon-lock form-control-feedback"></span><div class="col-lg-10">{error}</div>'])->widget(Select2::classname(), [
-					'data' => [1 => 'Inscrição Mobiliaria', 2 => 'Pessoa Fisica', 3 => 'Pessoa Juridica'],
-					'options' => [
-							'onchange' => 'mostrar_campo(this.value)',
-					],
-					'hideSearch' => true,
-			])->label(false);
-		?>
-		
-        <div id='dv_inscricao' class="col-xs-12" style='display: block'>
-	        <div class="row">
-			<?= $form->field($model, 'inscmob',
-			        [
-			            'inputOptions' => [
-			                'placeholder' => 'Informe a Inscrição Imobiliaria de Acesso',
-			            ],
-			            'options' => [
-	        		        'tag' => 'div',
-	        		        'class' => 'form-group has-feedback'
-	        		    ],
-	        		    'template' => '{input} <span class="glyphicon glyphicon-user form-control-feedback"></span><div class="col-lg-10">{error}</div>',
-			        ])->textInput() ?>
-	        </div>
-        </div>
-		
-        
-        <div id='dv_cnpj' class="col-xs-12" style='display: none'>
-	        <div class="row">
-			<?= $form->field($model, 'cnpj',
-			        [
-			            'inputOptions' => [
-			                'placeholder' => 'Informe o CNPJ de Acesso da Empresa',
-			            ],
-			            'options' => [
-	        		        'tag' => 'div',
-	        		        'class' => 'form-group has-feedback'
-	        		    ],
-	        		    'template' => '{input} <span class="glyphicon glyphicon-user form-control-feedback"></span><div class="col-lg-10">{error}</div>',
-			        ])->widget(\yii\widgets\MaskedInput::className(), [
-	                        'mask' => ['99.999.999/9999-99'],
-	                        ])->textInput(['maxlength' => false]) ?>
-	        </div>
-        </div>
-        
-        <div id='dv_cpf' class="col-xs-12" style='display: none'>
-	        <div class="row">
-			<?= $form->field($model, 'cpf',
-			        [
-			            'inputOptions' => [
-			                'placeholder' => 'Informe o CPF de Acesso da Empresa ',
-			            ],
-			            'options' => [
-	        		        'tag' => 'div',
-	        		        'class' => 'form-group has-feedback'
-	        		    ],
-	        		    'template' => '{input} <span class="glyphicon glyphicon-user form-control-feedback"></span><div class="col-lg-10">{error}</div>',
-			        		])->widget(\yii\widgets\MaskedInput::className(), [			        		
-			        	                        'mask' => ['999.999.999-99'],
-	                        ])->textInput(['maxlength' => false]) ?> 
-	        </div>
-        </div>
-
-        
-        
-        
-
         <div class="col-xs-12">
 	        <div class="row">
 		

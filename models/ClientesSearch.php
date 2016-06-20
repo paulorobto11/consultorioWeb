@@ -58,14 +58,79 @@ class ClientesSearch extends Clientes
         		}
         	}
         	
+        	if ($params['filtros'] == 2) {
+        		
+        		
+        		$query->where = '1=1 ';
+        	
+        		if (isset($params['bsc_data'])) {
+        			if ($params['bsc_data']) {
+        				$query->where .= ' and dtnascto = '.$params['bsc_data'];
+        			}
+        		}
+        		if (isset($params['model_cliente'])) {
+        			if (!empty($params['model_cliente'])) {
+        				$i = 0;
+        				$codigo = '(';
+        				foreach ($params['model_cliente'] as $clientes) {
+        					$i++;
+        					if ($i > 1) {
+        						$codigo .= ',';
+        					}
+        					$codigo .= $clientes->codigo;
+        				}
+        				$codigo .= ')';
+        				
+        				$query->where .= ' and codigo in '.$codigo;
+        			}
+        		}
+        	}
+        	
+       		if ($params['filtros'] == 3) {
+       			$funcoes = new Funcoes();
+       			$query->where = '1=1 ';
+        		if (isset($params['bsc_data_inicio'])) {
+        			if ($params['bsc_data_inicio']) {
+        				$query->where .= ' and data_cadastro between "'.$funcoes->inverteData($params['bsc_data_inicio']).'" and "'.$funcoes->inverteData($params['bsc_data_final']).'"';
+        			}
+        		}
+        		if (isset($params['bsc_cliente'])) {
+        			if ($params['bsc_cliente']) {
+        				$query->where .= ' and codigo = '.$params['bsc_cliente'];
+        			}
+        		}
+        		if (isset($params['bsc_tipo'])) {
+        			if ($params['bsc_tipo'] == '1') {
+        				$query->where .= ' and tipo = 0';
+        			}
+        			if ($params['bsc_tipo'] == '2') {
+        				$query->where .= ' and tipo = 1';
+        			}
+        		}
+        		if (isset($params['bsc_forma'])) {
+        			if ($params['bsc_forma']) {
+        				$query->where .= ' and formapgto = '.$params['bsc_forma'];
+        			}
+        		}
+       		}
+       		
+       		if ($params['filtros'] == 5) {
+       			$query->where = '1=1 and data_cadastro = '.date('Y-m-d');
+       		}
+       		 
+        		 
 //         	echo "<pre>";
 //         	print_r ($query);
+//         	exit();
         }
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+        	'pagination' => [
+        			'pageSize' => 20,],
+        	'sort' => ['defaultOrder' => ['nome' => SORT_ASC]],
         ]);
 
         $this->load($params);

@@ -7,8 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Alterando Empresa: '.$model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Empresas', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Alterar';
 ?>
 
-<?= $this->render('_form', ['model' => $model, 'config' => $config/*, 'cidades' => $cidades*/]) ?>
+<?= $this->render('_form', ['model' => $model]) ?>

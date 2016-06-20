@@ -7,7 +7,11 @@ return [
     'dir' => [
         'usuarios' => [
             'imagem' => '/uploads/usuarios/imagem/',
-        ]
+        ],
+    	'fotos' => [
+    				'fotos' => '/uploads/',
+    		]
+    		
     ],
     //Caminho utilizado para realizar o upload dos arquivos, não contém '/' no início 
     'upload' => [

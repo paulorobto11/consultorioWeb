@@ -8,6 +8,7 @@ use app\models\ConvenioSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Funcoes;
 
 /**
  * ConvenioController implements the CRUD actions for Convenio model.
@@ -65,8 +66,26 @@ class ConvenioController extends Controller
     {
         $model = new Convenio();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+        	$funcoes = new Funcoes();
+        	$model->nome = strtoupper($model->nome);
+        	$model->cnpj = $funcoes->retiraMascaras($model->cnpj);
+        	$model->dtnascto = $funcoes->inverteData($model->dtnascto);
+        	$model->cep = $funcoes->retiraMascaras($model->cep);
+        	$model->fone = $funcoes->retiraMascaras($model->fone);
+        	$transaction = \Yii::$app->db->beginTransaction();
+        	try {
+   				if (!$flag = $model->save(false)) {
+   					$transaction->rollBack();
+       			}
+        		$transaction->commit();
+			} catch (Exception $e) {
+        		$transaction->rollBack();
+        		echo $e->getMessage();
+        		exit;
+        	}
+        			
+            return $this->redirect(['index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -84,9 +103,29 @@ class ConvenioController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+        	$funcoes = new Funcoes();
+        	$model->nome = strtoupper($model->nome);
+        	$model->cnpj = $funcoes->retiraMascaras($model->cnpj);
+        	$model->dtnascto = $funcoes->inverteData($model->dtnascto);
+        	$model->cep = $funcoes->retiraMascaras($model->cep);
+        	$model->fone = $funcoes->retiraMascaras($model->fone);
+        	$transaction = \Yii::$app->db->beginTransaction();
+        	try {
+        		if (!$flag = $model->save(false)) {
+        			$transaction->rollBack();
+        		}
+        		$transaction->commit();
+        	} catch (Exception $e) {
+        		$transaction->rollBack();
+        		echo $e->getMessage();
+        		exit;
+        	}
+        	return $this->redirect(['index']);
         } else {
+        	$funcoes = new Funcoes();
+        	$model->dtnascto = $funcoes->ajustaData($model->dtnascto);
+        	
             return $this->render('update', [
                 'model' => $model,
             ]);

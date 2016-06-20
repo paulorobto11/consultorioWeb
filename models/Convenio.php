@@ -39,15 +39,12 @@ class Convenio extends \yii\db\ActiveRecord
     {
         return [
             [['nome'], 'required'],
-            [['dtnascto'], 'safe'],
-            [['dddfone', 'fone'], 'integer'],
+            [['fone','cep','dtnascto','cnpj'], 'safe'],
             [['vlrcons'], 'number'],
             [['nome', 'rua', 'email'], 'string', 'max' => 50],
-            [['cnpj'], 'string', 'max' => 14],
             [['nroend'], 'string', 'max' => 8],
             [['bairro', 'cidade'], 'string', 'max' => 35],
             [['uf'], 'string', 'max' => 2],
-            [['cep'], 'string', 'max' => 10],
         ];
     }
 

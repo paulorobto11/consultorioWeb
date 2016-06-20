@@ -4,6 +4,8 @@ namespace app\modules\auth\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\Funcoes;
+use app\base\Util;
 
 /**
  * LoginForm is the model behind the login form.
@@ -12,11 +14,8 @@ class UserSenha extends Model
 {
     public $username;
     public $password;
-    public $tipo_identify;
-    public $cpf;
-    public $cnpj;
-    public $inscmob;
     public $email;
+    public $rememberMe;
     
     private $_user = false;
 
@@ -56,29 +55,23 @@ class UserSenha extends Model
     	$user = $this->getUser();
     	if (!empty($user)) {
 	   	    $model = \app\models\Usuarios::find()->where(['user_id'=>$user->id])->one();
-	   	    
 	   	    if (empty($model)) {
 	   	    	return false;
 	   	    }
-	   	    
-	   	    if ($this->tipo_identify == 1) {
-	   	    	$model_empresa = \app\models\Mobiliario::find()->where(['cadmob'=>$this->inscmob])->one();
-	   	    } else {
-	   	    	if ($this->tipo_identify == 2) $documento = $this->cpf;
-	   	    	if ($this->tipo_identify == 3) $documento = $this->cnpj;
-	   	    	$model_empresa = \app\models\Mobiliario::find()->where(['cpfcnpj'=>$documento])->one();
-	   	    }
-	   	    
+
 	   	    if ($user->email != $this->email) {
-	   	    	echo "<hr>".$user->email;
-	   	    	exit();
+	   	    	return false;
+	   	    }
+	   	    	
+	   	    if ($model->email_pessoal != $this->email) {
 	   	    	return false;
 	   	    }
 	   	    
-	   	    if ($model->empresa_id != $model_empresa->cadmob) {
+   	    	$model_empresa = \app\models\Empresa::find()->where(['id'=>$model->empresa_id])->one();
+	   	    if (empty($model_empresa)) {
 	   	    	return false;
 	   	    }
-	   	    
+//     	}   
 	   	    return true;
     	}
     	
@@ -98,8 +91,82 @@ class UserSenha extends Model
 //             $this->getUser()->initRule();
             
 //             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+//         	$this->getUser()->setEmpresa($this->getUser()->id);
+//         	$this->getUser()->setUsuarios($this->getUser()->id);
+//         	$this->getUser()->setMedico(2);
+//         	$this->getUser()->initRule();
+        	
+//         	return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+        	 
 //         }
-        return false;
+//         return false;
+    }
+    
+    public function envioSenha() {
+    	$user = $this->getUser();
+    	if (!empty($user)) {
+    		$model = \app\models\Usuarios::find()->where(['user_id'=>$user->id])->one();
+    		
+    		if (empty($model)) {
+    			return false;
+    		}
+    		
+    		if ($user->email != $this->email) {
+    			return false;
+    		}
+    		
+    		if ($model->email_pessoal != $this->email) {
+    			return false;
+    		}
+    		
+    		$from = $this->email;
+    	 
+	    	if ($this->email) {
+//	    		$to = $this->email;
+	    		$to = 'paulorobto11@gmail.com';
+	    	} else {
+	    		$to = 'paulorobto11@gmail.com';
+	    	}
+	    	
+	    	$model_empresa = \app\models\Empresa::find()->where(['id'=>$model->empresa_id])->one();
+	    	
+	    	if (empty($model_empresa)) {
+	    		return false;
+	    	}
+	    	
+	    	$senha 	   = rand(0,10000000);
+	    	$modelUser = AuthUser::findOne($model->user_id);	
+	    	$modelUser->password = $senha;
+	    	$modelUser->password_repeat = $senha;
+	    	$modelUser->generateAuthKey();
+	    	if (!$modelUser->save()){
+	    		return $errorStr = Util::renderModelErrors($modelUser->getErrors());
+	    	}
+	    	
+	    	$funcoes = new Funcoes();
+	    	$cnpj 	 = $funcoes->mascaraCnpj($model_empresa->cnpj);
+	    	$fone 	 = $funcoes->mascaraFone($model_empresa->telefone1);
+    		$subject = 'Redefinição de Senha do Sistema Consultorio Medico';
+    		$msg = "Sua Senha de Acesso ao Sistema de Consultorio será modificada por motivo de sua solicitação! <br>
+    				Você poderá usar a Senha Provisoria abaixo informada e ao acessar o sistema,
+    				você poderá altera-la por uma de sua escolha...<br><br> 
+					Senha de Acesso Provisoria: ".$senha."<br><br><br>
+					Mensagem criada automaticamente, por favor não responda !<br><br><br>
+							
+					Obrigado, <br>
+					Equipe de Administração do Sistema.";
+    	 
+	    	Yii::$app->mailer->compose()
+	    	->setFrom($from)
+	    	->setTo($to)
+	    	->setSubject($subject)
+	    	->setTextBody('Plain text content')
+	    	->setHtmlBody($msg)
+	    	->send();
+	    	
+	    	return true;
+    	}
+    	 
     }
 
     /**

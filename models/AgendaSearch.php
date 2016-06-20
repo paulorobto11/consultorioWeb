@@ -45,10 +45,58 @@ class AgendaSearch extends Agenda
         $query = Agenda::find();
 
         // add conditions that should always apply here
-
+	        
+        if (isset($params['filtros'])) {
+        	
+        	$funcoes = new Funcoes();
+        	
+        	
+	        if ($params['filtros'] == 1) {
+	        	$query->where = '1=1 and medico = '.Yii::$app->user->identity->medico_id;
+		        if (isset($params['bsc_confirmada'])) {
+		        	if ($params['bsc_confirmada'] == 1) {
+		        		$query->where .= ' and confirmada = 0';
+		        	}
+		        	if ($params['bsc_confirmada'] == 2) {
+		        		$query->where .= ' and confirmada = 2';
+		        	}
+		        }
+		        if (isset($params['bsc_data_inicio'])) {
+		        	if ($params['bsc_data_inicio']) {
+		        		$query->where .= ' and data between "'.$funcoes->inverteData($params['bsc_data_inicio']).'" and "'.$funcoes->inverteData($params['bsc_data_final']).'"';
+		        	}
+		        }
+		        if (isset($params['bsc_cliente'])) {
+		        	if ($params['bsc_cliente']) {
+		        		$query->where .= ' and codigo = '.$params['bsc_cliente'];
+		        	}
+		        }
+		        if (isset($params['bsc_tipo'])) {
+		        	if ($params['bsc_tipo']) {
+		        		$query->where .= ' and tipo = '.$params['bsc_tipo'];
+		        	}
+		        }
+		        if (isset($params['bsc_forma'])) {
+		        	if ($params['bsc_forma']) {
+		        		$query->where .= ' and modopgto = '.$params['bsc_forma'];
+		        	}
+		        }
+	        }
+	        
+// 	                	echo "<pre>";
+// 	                	print_r ($query);
+// 	                	exit();
+	        	    
+        }
+        
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+        		'query' => $query,
+        		'pagination' => [
+        				'pageSize' => 20,],
+        		'sort' => ['defaultOrder' => ['data' => SORT_DESC]],
+        		
         ]);
+        
 
         $this->load($params);
 

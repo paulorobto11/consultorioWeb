@@ -12,10 +12,7 @@ use kartik\grid\GridView;
 use app\models\Agenda;
 use app\models\Clientes;
 use app\models\AgendaData;
-
-// $model_data = new AgendaData();
-// echo $data_base = $model_data->entra_data($model->medico);
-// exit();
+use yii\helpers\ArrayHelper;
 
 ?>
 
@@ -33,15 +30,19 @@ use app\models\AgendaData;
 					    		
 					    		$model_data = new AgendaData();
 				    			$data_base = $model_data->entra_data($model->medico);
-					    		$model_agenda = Agenda::findOne(['data'=>$data_base,'hora'=>$model->id,'medico'=>$model->medico]);
-					    		if (empty($model_agenda)) {
-						    		$html.= '<div class="col-md-3 text-center">'.
-						    				Html::a('<span class="glyphicon glyphicon-user"></span>', $url, [
-						    						'title' => Yii::t('yii', '2ª via Nota Fiscal'),
-						    						'class' => 'btn btn-sm btn-primary',
-						    						'id' => 'div_'.$model->id,
-						    						'onclick' => 'entra_cadastro("'.$model->id.'","'.$model->medico.'")',]).'</div>';
-						    		}
+				    			$data = date('Y-m-d');
+				    			 
+				    			if ($data <= $data_base) {
+						    		$model_agenda = Agenda::findOne(['data'=>$data_base,'hora'=>$model->id,'medico'=>$model->medico]);
+						    		if (empty($model_agenda)) {
+							    		$html.= '<div class="col-md-3 text-center">'.
+							    				Html::a('<span class="glyphicon glyphicon-user"></span>', $url, [
+							    						'title' => Yii::t('yii', '2ª via Nota Fiscal'),
+							    						'class' => 'btn btn-sm btn-primary',
+							    						'id' => 'div_'.$model->id,
+							    						'onclick' => 'entra_cadastro("'.$model->id.'","'.$model->medico.'")',]).'</div>';
+							    		}
+				    			}
 						    		return $html;
 						    		
 					    		}
@@ -79,7 +80,7 @@ use app\models\AgendaData;
 					   			
 					   			[
 					   			'attribute'=>'medico',
-					   			'header'=>'Identificação do Paciente',
+					   			'header'=>'Identificao do Paciente',
 					   			'hAlign'=>'left',
 					   			'vAlign'=>'middle',
 					   			'width'=>'240px',
@@ -174,7 +175,15 @@ use app\models\AgendaData;
 				    			$data_base = $model_data->entra_data($data->medico);
 					   			$model_agenda = Agenda::findOne(['data'=>$data_base,'hora'=>$data->id,'medico'=>$data->medico]);
 					   			if (!empty($model_agenda)) {
-					   				if ($model_agenda->tipo == 1) {
+					   				$model_cliente = Clientes::findOne(['codigo'=>$model_agenda->codigo]);
+					   				$situacao_cliente = 0;
+					   				if (!empty($model_cliente)) {
+					   					$situacao_cliente = $model_cliente->tipo;
+					   				}
+					   				
+					   				if ($situacao_cliente == 1) {
+					   					return 'Provisório';
+					   				} else if ($model_agenda->tipo == 1) {
 					   					return 'Consulta';
 					   				} else {
 					   					return 'Retorno';
@@ -201,14 +210,19 @@ use app\models\AgendaData;
 				    			
 						    		$model_agenda = Agenda::findOne(['data'=>$data_base,'hora'=>$model->id,'medico'=>$model->medico]);
 						    		if (!empty($model_agenda)) {
+						    			$model_cliente = Clientes::findOne(['codigo'=>$model_agenda->codigo]);
+						    			if (!empty($model_cliente)) {
+						    				$situacao_cliente = $model_cliente->tipo;
+						    			}
+						    			 
 						    			if ($data == $data_base) {
-						    				if ($model_agenda->confirmada == 0) {
+						    				if ($model_agenda->confirmada == 1) {
 									    		$html.= '<div class="col-md-3 text-center">'.
 									    				Html::a('<span class="glyphicon glyphicon-ok-circle"></span>', $url, [
 									    						'title' => Yii::t('yii', 'Enviar Paciente para Consulta'),
 									    						'class' => 'btn btn-sm btn-success',
 									    						'id' => 'div_'.$model->id,
-									    						'onclick' => 'enviar_consulta("'.$model->id.'")',]).'</div>';
+									    						'onclick' => 'enviar_consulta("'.$model->id.'","'.$situacao_cliente.'")',]).'</div>';
 						    				}
 						    			}							    				
 							    				
@@ -221,13 +235,13 @@ use app\models\AgendaData;
 							    						
 
 							    		if ($data <= $data_base) {
-							    			if ($model_agenda->confirmada == 0) {
+							    			if ($model_agenda->confirmada == 1) {
 									    		$html.= '<div class="col-md-3 text-center">'.
 									    				Html::a('<span class="glyphicon glyphicon-remove-circle"></span>', $url, [
 									    						'title' => Yii::t('yii', 'Excluir Agendamento do Paciente'),
 									    						'class' => 'btn btn-sm btn-danger',
 									    						'id' => 'div_'.$model->id,
-									    						'onclick' => 'via_nfse("'.$model->id.'")',]).'</div>';
+									    						'onclick' => 'excluir_agendamento("'.$model->id.'")',]).'</div>';
 							    			}
 							    		}
 				    			}
@@ -239,7 +253,7 @@ use app\models\AgendaData;
 					    		
 					    	];
 					    	    							 
-					    	//$dataProvider->setSort(['defaultOrder' => ['hora' => 'asc']]);
+					    	//$dataProvider->setSort(['defaultOrder' => ['id' => 'asc']]);
 					
 					    	Pjax::begin(['id'=>'EmpresaGrid']);
 					    	
@@ -251,13 +265,14 @@ use app\models\AgendaData;
 					    		'filterRowOptions'=>['class'=>'kartik-sheet-style'],
 					    		'pjax'=>true,
 					    		'toolbar'=> [
-					    			['content'=>
-					    					//Html::a('Cadastro Novo Provisorio', [''], ['onclick'=>'excluir_consulta()','class' => 'btn btn-success', 'title' => 'Nova Empresa'])
-					    					Html::a('<span class="glyphicon glyphicon-remove-circle"> LIMPAR-CONSULTAS-ENVIADAS</span>', '', [
-					    							'title' => Yii::t('yii', 'Excluir o envio de Consultas para Atendimento !'),
-					    							'class' => 'btn btn-sm btn-danger',
-					    							'id' => 'div_'.$model->id,
-					    							'onclick' => 'excluir_consulta()',])
+					    			[
+// 					    					'content'=>
+// 					    					//Html::a('Cadastro Novo Provisorio', [''], ['onclick'=>'excluir_consulta()','class' => 'btn btn-success', 'title' => 'Nova Empresa'])
+// 					    					Html::a('<span class="glyphicon glyphicon-remove-circle"> LIMPAR-CONSULTAS-ENVIADAS</span>', '', [
+// 					    							'title' => Yii::t('yii', 'Excluir o envio de Consultas para Atendimento !'),
+// 					    							'class' => 'btn btn-sm btn-danger',
+// 					    							'id' => 'div_'.$model->id,
+// 					    							'onclick' => 'excluir_consulta()',])
 					    					
 					    			],
 					    		],
@@ -268,7 +283,7 @@ use app\models\AgendaData;
 					    		'hover'=>true,
 					    		'panel'=> [
 					    			'type'=>GridView::TYPE_PRIMARY,
-					    			'heading'=> 'Lista de Notas Fiscais de Serviços Geradas',
+					    			'heading'=> 'Lista de Agendamentos de Pacientes',
 					    		],
 					    		'persistResize'=>false,
 					    	]);

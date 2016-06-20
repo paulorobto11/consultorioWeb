@@ -52,17 +52,7 @@ use app\models\Contribuinte;
 							                	$data += [$clientes->codigo => $clientes->nome];
 							                }
 									                
-							                echo $form->field($model_agenda, 'bsc_cliente')->widget(Select2::classname(), [
-							                		'data' => $data,
-							                		'options' => ['placeholder' => 'Selecione o Cliente',
-							                				'onchange' => 'buscar_cadastro("'.$model_agenda->hora.'","'.$model_agenda->medico.'")'     
-							                		],
-							                		'pluginOptions' => ['allowClear' => true],
-							                		'hideSearch' => false,
-							                		'disabled' => false,
-							                		'pluginEvents' => [
-							                		],
-							                    ])->label('Nome do Cliente:');
+							                echo $form->field($model_agenda, 'nome_cliente')->textInput()->label('Nome do Cliente:');
 					                    ?>
 	                    	                    
 								    </div>
@@ -77,10 +67,8 @@ use app\models\Contribuinte;
 							</div>
 							
 			    		</div>
-		    		</div>
-			    		
-	    		</fieldset>
-	    	</div>
-   		</div>
-   	</div>
-</div>
+		    		</fieldset>
+		    	</div>
+	   		</div>
+	   	</div>
+	</div>

@@ -14,8 +14,6 @@ use app\models\Clientes;
 use app\models\AgendaData;
 use yii\helpers\Url;
 
-
-kkkk
 ?>
 
 <div class="agenda-form">
@@ -91,7 +89,8 @@ kkkk
 		</div>
 	</div>
 </div>	
-    <?php ActiveForm::end(); ?>
+    <?php 
+    ActiveForm::end(); ?>
 </div>
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -107,14 +106,29 @@ kkkk
      <div class="modal-content">
             	<div class="modal-header">
                 	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                	<h4 class="modal-title text-primary"><i class="fa fa-user-plus"></i> Novo Cliente</h4>
+                	<h4 class="modal-title text-primary"><i class="fa fa-user-plus"></i>Consulta do Paciente</h4>
               	</div>
               	<div class="modal-body no-padding"></div>
      
-		<div id="div_mod"></div>
+		<div id="div_mod_cliente"></div>
      </div>
   </div>
 </div>
+
+<div class="modal fade" id="myModalProvisorio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg">
+     <div class="modal-content">
+            	<div class="modal-header">
+                	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                	<h4 class="modal-title text-primary"><i class="fa fa-user-plus"></i>Cadastro de Paciente</h4>
+              	</div>
+              	<div class="modal-body no-padding"></div>
+     
+		<div id="div_mod_provisorio"></div>
+     </div>
+  </div>
+</div>
+
 
 
 

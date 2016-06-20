@@ -15,6 +15,8 @@ use app\modules\auth\models\AuthUser;
 use yii\web\UploadedFile;
 use app\base\Util;
 
+define('UPLOAD_DIR', $_SERVER['DOCUMENT_ROOT'].'consultorioWeb/web/uploads/usuarios/imagem/');
+
 /**
  * UsuariosController implements the CRUD actions for Usuarios model.
  */
@@ -42,7 +44,7 @@ class UsuariosController extends Controller
     public function actionIndex()
     {
         $searchModel = new UsuariosSearch();
-        $params['empresa_id'] = Json::decode(Yii::$app->user->identity->mobiliario_cadmob);
+        $params['empresa_id'] = Json::decode(Yii::$app->user->identity->empresa_id);
         $dataProvider = $searchModel->search($params);
 
         return $this->render('index', [
@@ -169,7 +171,7 @@ class UsuariosController extends Controller
         	
         	$model->save();
         	 
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -220,6 +222,61 @@ class UsuariosController extends Controller
     		]);
     	}
     }
+    
+    public function actionSalvar_imagem()
+    {
+    	$imagem = str_replace('data:image/png;base64,','',$_POST['imagem']);
+    	 
+    	$img = rand(0,10000000).'.jpg';
+    	$this->base64_to_jpeg($imagem,$img);
+    	 
+    	$model_usuarios = Usuarios::findOne(['id'=>$_REQUEST['codigo']]);
+    	if (!empty($model_usuarios)) {
+    		$transaction = \Yii::$app->db->beginTransaction();
+    		$model_usuarios->foto = $img;
+    		try {
+    			if (!$flag = $model_usuarios->save(false)) {
+    				$key = 1;
+    			}
+    			$transaction->commit();
+    		} catch (Exception $e) {
+    			$transaction->rollBack();
+    			echo $e->getMessage();
+    			exit;
+    		}
+    	}
+    	echo $img;
+    }
+    
+    public function actionExcluir_imagem() {
+    	$model_usuarios = Usuarios::findOne(['id'=>$_REQUEST['codigo']]);
+    	if (!empty($model_usuarios)) {
+    		$transaction = \Yii::$app->db->beginTransaction();
+    		$model_usuarios->foto = '';
+    		try {
+    			if (!$flag = $model_usuarios->save(false)) {
+    				$key = 1;
+    			}
+    			$transaction->commit();
+    		} catch (Exception $e) {
+    			$transaction->rollBack();
+    			echo $e->getMessage();
+    			exit;
+    		}
+    	}
+    	 
+    	echo '0';
+    	 
+    }
+    
+    
+    function base64_to_jpeg($base64img,$img) {
+    	$base64img = str_replace('data:image/jpeg;base64,', '', $base64img);
+    	$data = base64_decode($base64img);
+    	$file = UPLOAD_DIR . $img;
+    	file_put_contents($file, $data);
+    }
+    
     
     /**
      * Deletes an existing Usuarios model.

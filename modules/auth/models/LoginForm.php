@@ -89,19 +89,12 @@ class LoginForm extends Model
     {
     	
         if ($this->validate()) {
-//         	echo "aaa00".$this->identify;
-//         	exit();
-        	
-//         	echo "<pre>";
-//         	print_r ($this->getUser()->id);
-//          	exit();
-        	 
             $this->getUser()->setEmpresa($this->getUser()->id);
             $this->getUser()->setUsuarios($this->getUser()->id);
             $this->getUser()->setMedico($this->identify);
             $this->getUser()->initRule();
             
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            return Yii::$app->user->login($this->getUser(), 3600*24*7);
         }
         return false;
     }

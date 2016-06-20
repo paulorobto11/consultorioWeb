@@ -135,6 +135,11 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
 
                $this->usuarios_id=$model->id;
                $this->usuarios_nome=$model->apelido;
+               if($model->nome != NULL || $model->nome!='')
+               {
+               	$this->usuarios_dados['nome']=$model->nome;
+               }
+                
                if($model->apelido != NULL || $model->apelido!='')
                {
                    $this->usuarios_dados['apelido']=$model->apelido;
@@ -147,6 +152,15 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
                {
                    $this->usuarios_dados['data_cadastro']=$model->data_cadastro;
                }
+               if($model->tipo_user != NULL || $model->tipo_user!='')
+               {
+	               	if ($model->tipo_user == 1) {
+	               		$this->usuarios_dados['tipo_usuario']= 'Usuario';
+	               	} else {
+	               		$this->usuarios_dados['tipo_usuario']= 'Medico';
+	               	}
+               }
+                
                
 //                echo "<pre>";
 //                print_r ($this->usuarios_dados);
@@ -198,14 +212,14 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
         {
             $this->empresa_id=$model->id;
             $this->empresa_identificacao=$model->identificacao;
-            if($model->empresa_secretaria != NULL || $model->empresa_secretaria!='')
+          /*  if($model->empresa_secretaria != NULL || $model->empresa_secretaria!='')
             {
                 $empresa['secretaria']=$model->empresa_secretaria;
             }
             if($model->empresa_departamento != NULL || $model->empresa_departamento!='')
             {
             	$empresa['departamento']=$model->empresa_departamento;
-            }
+            }*/
             
             if($model->cnpj != NULL || $model->cnpj!='')
             {

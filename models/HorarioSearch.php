@@ -43,15 +43,21 @@ class HorarioSearch extends Horario
     {
         $query = Horario::find();
         
-//         if (isset($params['filtros'])) {
-//         	if ($params['filtros'] == 1) {
-        		$query->where = '1=1 and medico = 2';
-//         	}
+        if (isset($params['filtros'])) {
+        	if ($params['filtros'] == 1) {
+        		$query->where = '1=1 ';
         		
-//         		//         	echo "<pre>";
-//         		//         	print_r ($query);
-//         		//         	exit();
-//        	}
+        		if (isset($params['bsc_medico'])) {
+        			if ($params['bsc_medico']) {
+        				$query->where .= ' and medico = '.$params['bsc_medico'];
+        			}
+        		}
+        	}
+        		
+//         	echo "<pre>";
+//         	print_r ($query);
+//         	exit();
+       	}
         		
 
         // add conditions that should always apply here
@@ -59,8 +65,8 @@ class HorarioSearch extends Horario
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         		     'pagination' => [
-        				         'pageSize' => 40,],
-        			// 'sort' => ['defaultOrder' => ['hora' => 'asc']],
+        				         'pageSize' => 30,],
+        			 'sort' => ['defaultOrder' => ['hora' => SORT_ASC]],
         		
         ]);
 

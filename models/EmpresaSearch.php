@@ -18,8 +18,8 @@ class EmpresaSearch extends Empresa
     public function rules()
     {
         return [
-            [['id', 'tipo_inscricao', 'pais_id', 'estado_federacao_id', 'cidade_id', 'responsavel_id'], 'integer'],
-            [['identificacao', 'nome_fantasia', 'razao_social', 'cpfcnpj', 'inscricao_estadual', 'inscricao_municipal', 'logradouro', 'numero', 'cep', 'bairro', 'telefone1', 'telefone2', 'email', 'site', 'logo'], 'safe'],
+            [['id', 'estado', 'cidade'], 'integer'],
+            [['razao_social', 'cnpj', 'inscricao_estadual', 'inscricao_municipal', 'logradouro', 'numero', 'cep', 'bairro', 'telefone1', 'telefone2', 'email', 'site', 'logo', 'responsavel_id'], 'safe'],
         ];
     }
 
@@ -60,17 +60,12 @@ class EmpresaSearch extends Empresa
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'tipo_inscricao' => $this->tipo_inscricao,
-            'pais_id' => $this->pais_id,
-            'estado_federacao_id' => $this->estado_federacao_id,
-            'cidade_id' => $this->cidade_id,
-            'responsavel_id' => $this->responsavel_id,
+            'estado' => $this->estado,
+            'cidade' => $this->cidade,
         ]);
 
-        $query->andFilterWhere(['like', 'identificacao', $this->identificacao])
-            ->andFilterWhere(['like', 'nome_fantasia', $this->nome_fantasia])
-            ->andFilterWhere(['like', 'razao_social', $this->razao_social])
-            ->andFilterWhere(['like', 'cpfcnpj', $this->cpfcnpj])
+        $query->andFilterWhere(['like', 'razao_social', $this->razao_social])
+            ->andFilterWhere(['like', 'cnpj', $this->cnpj])
             ->andFilterWhere(['like', 'inscricao_estadual', $this->inscricao_estadual])
             ->andFilterWhere(['like', 'inscricao_municipal', $this->inscricao_municipal])
             ->andFilterWhere(['like', 'logradouro', $this->logradouro])
@@ -81,7 +76,8 @@ class EmpresaSearch extends Empresa
             ->andFilterWhere(['like', 'telefone2', $this->telefone2])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'site', $this->site])
-            ->andFilterWhere(['like', 'logo', $this->logo]);
+            ->andFilterWhere(['like', 'logo', $this->logo])
+            ->andFilterWhere(['like', 'responsavel_id', $this->responsavel_id]);
 
         return $dataProvider;
     }

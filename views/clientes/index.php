@@ -1,68 +1,43 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
+use kartik\form\ActiveForm;
+use yii\helpers\Url;
+
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\ClientesSearch */
+/* @var $searchModel app\models\BancosSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Clientes';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Lista de Clientes';
+$this->params['breadcrumbs'][] = 'Consulta';
 ?>
-<div class="clientes-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Create Clientes', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'codigo',
-            'nome',
-            'dtnascto',
-            'idade',
-            'natural',
-            // 'sexo',
-            // 'conjuge',
-            // 'profissao',
-            // 'sangue',
-            // 'mae',
-            // 'pai',
-            // 'estcivil',
-            // 'cpf',
-            // 'rg',
-            // 'orgao',
-            // 'emissao',
-            // 'ufemis',
-            // 'rua',
-            // 'nroend',
-            // 'bairro',
-            // 'cidade',
-            // 'uf',
-            // 'cep',
-            // 'dddfone',
-            // 'fone',
-            // 'dddcel',
-            // 'celular',
-            // 'email:email',
-            // 'formapgto',
-            // 'vlrcons',
-            // 'convenio',
-            // 'matricula',
-            // 'dtavalid',
-            // 'tipo',
-            // 'dtacons',
-            // 'dataultima',
-            // 'dtaproxima',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+<!-- Default box -->
+<div class="box">
+    	<?php $form = ActiveForm::begin(); ?>
+    	
+		<?php 
+			echo $this->render('_form_filtro', [
+								'model' => $model,
+								'form' => $form,
+		    ]);
+		?>
+		
+    <div id='dv_grid' class="box-body">
+		<?php 
+	    	echo $this->render('gridView', [
+	    			'searchModel' => $searchModel,
+	    			'dataProvider' => $dataProvider,
+	    	]);
+	    	?>
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>
+
+
+<?php
+	$this->registerJsFile(Url::home() . 'plugins/accounting/accounting.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+	$this->registerJsFile(Url::home() . 'app/js/jquery.maskedinput.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+	$this->registerJsFile(Url::home() . 'app/js/mascaras.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+	$this->registerJsFile(Url::home() . 'app/js/clientes.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+?> 

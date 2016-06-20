@@ -7,6 +7,7 @@ use yii\widgets\Pjax;
 use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use app\base\Util;
+use app\models\Funcoes;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ColaboradorSearch */
@@ -36,28 +37,37 @@ $this->params['breadcrumbs'][] = $this->title;
         
     	<?php 
     	$gridColumns = [
-    	    [
-    	        'class'=>'kartik\grid\SerialColumn',
-    	        'header'=>'#',
-    	    ],    	    
             [
                 'attribute'=>'id',
+    	    	'label' => 'Id',
             ],
     		[
     			'attribute'=>'nome',
+    	    	'label' => 'Nome Usuario',
     		],
+
+    		[
+        		'attribute'=>'tipo_user',
+    	    	'label' => 'Tipo Usuario',
+    			'value' => function($data){
+        		  return $data->tipo_user == 1 ? 'Usuario' : 'Médico';
+    		}
+    		],
+    			
 //     		[
 //     			'attribute'=>'cargo_id',
 //     		    'value' => 'cargo.cargo'
 //     		],
     	    [
     	        'attribute'=>'email_pessoal',
+    	    	'label' => 'Email',
     	    ],
     		[
-    			'attribute'=>'fone1',
-    		    'label' => 'Telefone',
+    			'attribute'=>'data_cadastro',
+    		    'label' => 'Data Cadastro',
     		    'value' => function($data){
-                    return Util::maskBackend($data->fone1, Util::MASK_TELEFONE);
+    		    			$funcoes = new Funcoes();
+                    return $funcoes->ajustaData($data->data_cadastro);
                 }
     		],
     		[
@@ -86,7 +96,7 @@ $this->params['breadcrumbs'][] = $this->title;
     		],
     	];
     	    							 
-    	$dataProvider->setSort(['defaultOrder' => ['id' => 'DESC']]);
+    	$dataProvider->setSort(['defaultOrder' => ['id' => 'ASC']]);
 
     	Pjax::begin(['id'=>'ColaboradorGrid']);
     	

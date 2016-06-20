@@ -14,7 +14,7 @@ $this->title = 'Login';
 ?>
 <div class="login-box  ">
     <div class="login-logo">
-    	<a href="../../index2.html"><i><b>Consultorio</b></i> <b>Eldo Ern</b></a>
+    	<a href="../../index2.html"><i><b>Consultorio</b></i> <b>Médico</b></a>
     </div>
     <!-- /.login-logo -->
 

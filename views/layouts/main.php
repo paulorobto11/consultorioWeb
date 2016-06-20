@@ -16,14 +16,12 @@ LoadingAsset::register($this);
 
 AppAsset::register($this);
 
-$funcoes = new Funcoes();
+if (!isset(Yii::$app->user->identity)) {
+	return $this->redirect(Yii::$app->user->loginUrl);
+}
 
-// if (!is\Yii::$app->user->identity->usuarios_id) {
-// 	$model = new \app\modules\auth\models\LoginForm();
-// 	return $this->render('@app/modules/auth/views/auth-user/login', [
-// 			'model' => $model
-// 	]);
-// }
+
+$funcoes = new Funcoes();
 
 $userName = Yii::$app->user->isGuest ? 'Visitante' : Yii::$app->user->identity->username;
 
@@ -47,7 +45,7 @@ $_path=Url::to([\Yii::$app->params['dir']['usuarios']['imagem']]);
  
 $out_foto=$_path.'/default.jpg';
 
-/*
+
 if ($usuario && $usuario->foto)
 {
     $root=Yii::getAlias('@webroot');
@@ -59,7 +57,7 @@ if ($usuario && $usuario->foto)
 	}
 	    
 }
-*/
+
 $usuariosFoto=$out_foto;
 ?>
 
@@ -76,7 +74,7 @@ $usuariosFoto=$out_foto;
 <body class="hold-transition skin-blue sidebar-mini">
 
 <div class="loading-fog text-center" id="loading-fog"  style="padding-top: 50px;">  
-    <div class="cssload-loader text-center"><p>Carregando2222</p></div>
+    <div class="cssload-loader text-center"><p>Carregando</p></div>
 </div>
 
 <?php $this->beginBody() ?>
@@ -89,7 +87,7 @@ $usuariosFoto=$out_foto;
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>G</b>ER</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><i><b>Prefeitura</b></i> <b>ISS Online</b></span>
+            <span class="logo-lg"><i><b>Consultorio</b></i> <b>Médico</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -183,33 +181,31 @@ $usuariosFoto=$out_foto;
                             <img src="<?= $usuariosFoto ?>" class="user-image" alt="User Image">
                             <span class="hidden-xs"><?php echo $usuariosNome; ?></span>
                         </a>
-                        <ul class="dropdown-menu" style="border-color: #3C8DBC!important;border-top: 1px solid #dddddd!important;height:220px">
+                        <ul class="dropdown-menu" style="border-color: #3C8DBC!important;border-top: 1px solid #dddddd!important;height:180px">
                             <!-- User image -->
                             <li class="user-header" style="text-align:left">
                             	<img src="<?= $usuariosFoto ?>" class="user-image" alt="Foto do usuário">
                             	<?php 
 								print Html::tag('p', $usuariosNome);
+								
+// 								echo "<pre>";
+// 								print_r ($usuariosDados);
+// 								exit();
     
                                 if(!empty($usuariosDados)) {
-                                    if (array_key_exists('cpf', $usuariosDados)) {
-                                        print Html::tag('p', (isset($usuariosDados['cargo'])?$usuariosDados['cargo']:'Cargo não informado'));
+                                    if (array_key_exists('tipo_usuario', $usuariosDados)) {
+                                        print Html::tag('p', "<b>Tipo :</b> " .(isset($usuariosDados['tipo_usuario'])?$usuariosDados['tipo_usuario']:'Usuario não informado'));
 										print Html::tag('br');
                                     }
-                                    if (array_key_exists('apelido', $usuariosDados)) {
-                                        print Html::tag('span', "<b>Apelido :</b> " . $usuariosDados['apelido']);
+                                    if (array_key_exists('nome', $usuariosDados)) {
+                                        print Html::tag('span', $usuariosDados['nome']);
                                     }
 									print Html::tag('br');
-									if (array_key_exists('fone1', $usuariosDados)){
-										print Html::tag('span', '<b>Telefone :</b>'.$usuariosDados['fone1']);
-										print Html::tag('br');
-									}
-									
-									if (array_key_exists('email_empresa', $usuariosDados)){
-										print Html::tag('span', '<b>E-mail :</b>'.$usuariosDados['email_empresa']);
-										print Html::tag('br');
-									}
+// 									if (array_key_exists('email_pessoal', $usuariosDados)){
+// 										print Html::tag('span', '<b>Email :</b>'.$usuariosDados['email_pessoal']);
+// 										//print Html::tag('br');
+// 									}
 									echo '<a href="'.Url::to(['/usuarios/update-usuario/']) . '" style="color:#000;padding: 15px 0px;"><span>Editar perfil</span></a>';
-                                    
                                 }
 								
                                 ?>
@@ -244,13 +240,37 @@ $usuariosFoto=$out_foto;
             <!-- sidebar menu: : style can be found in sidebar.less -->
 			<ul class="sidebar-menu">
                 <li class="header">Menu</li>
-                <li><a href="<?php echo Url::to(['/site/index'])?>"><i class="fa fa-home"></i> <span>INÍCIO</span></a></li>
-	            <li><a href="<?php echo Url::to(['agenda/create'])?>"><i class="fa fa-edit"></i> <span>AGENDAMENTO</span></a></li>
-    	        <li><a href="<?php echo Url::to(['sinistro/index'])?>"><i class="fa fa-edit"></i> <span>CONSULTA MEDICA</span></a></li>
+                <li><a href="<?php echo Url::to(['/site/index'])?>"><i class="fa fa-home"></i> <span>INICIO</span></a></li>
+	            <?php if ($usuario->tipo_user == 1) { ?>
+		            <li><a href="<?php echo Url::to(['agenda/create'])?>"><i class="fa fa-edit"></i> <span>AGENDAMENTO</span></a></li>
+    	        <?php } ?>
+		            
+	            <?php // if ($usuario->tipo_user == 2) { ?>
+    	        	<li><a href="<?php echo Url::to(['consultas/create'])?>"><i class="fa fa-edit"></i> <span>CONSULTA MEDICA</span></a></li>
+    	        	<li><a href="<?php echo Url::to(['receita/create'])?>"><i class="fa fa-edit"></i> <span>RECEITA MEDICA</span></a></li>
+    	        	<li><a href="<?php echo Url::to(['clientes/create'])?>"><i class="ion ion-person-stalker"></i> <span>PACIENTES</span></a></li>
+    	        <?php // } ?>
                 
                 <!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
                 <!-- ADMINISTRATIVO -->
                 <!-- --------------------------------------------------------------------------------------------------------------------------------------------- -->
+                
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-tags"></i> <span>CONSULTORIO</span> <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li>
+                            <a href="#"><i class="fa fa-edit"></i>Consultas<i class="fa fa-angle-left pull-right"></i></a>
+                            <ul class="treeview-menu">
+			                    <li><a href="<?php echo Url::to(['/agenda'])?>"><i class="fa fa-edit"></i> <span>de Agendamentos</span></a></li>
+			                   	<li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+			                    <li><a href="<?php echo Url::to(['/consultas'])?>"><i class="fa fa-edit"></i> <span>de Consultas Medica</span></a></li>
+		                    </ul>
+		               </li>
+		           </ul>         
+                </li>
+                
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-tags"></i> <span>ADMINISTRATIVO</span> <i class="fa fa-angle-left pull-right"></i>
@@ -260,8 +280,23 @@ $usuariosFoto=$out_foto;
                             <a href="#"><i class="fa fa-edit"></i>Cadastros<i class="fa fa-angle-left pull-right"></i></a>
                             <ul class="treeview-menu">
                                 <li><a href="<?php echo Url::to(['/clientes'])?>">de Pacientes</a></li>
-                                <li><a href="<?php echo Url::to(['/notafiscal/substituicao'])?>">de Horários</a></li>
-                                <li><a href="<?php echo Url::to(['/notafiscal/cancelamento'])?>">de Convenios</a></li>
+                                <li><a href="<?php echo Url::to(['/horario/create'])?>">de Horários</a></li>
+                            	<li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+                                <li><a href="<?php echo Url::to(['/convenio'])?>">de Convenios</a></li>
+                                <li><a href="<?php echo Url::to(['/fornecedores'])?>">Fornecedor</a></li>
+                            	<li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+                            	<li><a href="<?php echo Url::to(['/bancos'])?>">Banco</a></li>
+                            	<li><a href="<?php echo Url::to(['/conta-corrente'])?>">Conta Corrente</a></li>
+                            	<li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+                                <li><a href="<?php echo Url::to(['/centro-custo'])?>">Centro de Custo</a></li>
+                                <li><a href="<?php echo Url::to(['/conta-despesa'])?>">Conta Orçamentaria</a></li>
+                            	<li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+                                <li><a href="<?php echo Url::to(['/histmov-bancario'])?>">Histórico Mov. Bancário</a></li>
+                                <li><a href="<?php echo Url::to(['/histmov-caixa'])?>">Histórico Mov. Caixa</a></li>
+                            	<li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+								<li><a href="<?php echo Url::to(['/plano-contas/create'])?>">Previsão Orçamentária</a></li>
+                                <li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
+                                
                             </ul>
                         </li>
                 	</ul>
@@ -280,8 +315,21 @@ $usuariosFoto=$out_foto;
                         <a href="#"><i class="fa fa-edit"></i> Movimentos <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
                             <li><a href="<?php echo Url::to(['/movimento-caixa'])?>"> Movimentação Caixa</a></li>
+                            <li><a href="<?php echo Url::to(['/movimento-bancario'])?>"> Movimentação Bancária</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="#"><i class="fa fa-edit"></i> Consultas <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a href="<?php echo Url::to(['/plano-contas/previsao'])?>"> Previsão de Contas</a></li>
+                            <li><a href="<?php echo Url::to(['/movimento-caixa/conextrato'])?>"> Extrato de Caixa</a></li>
+                            <li><a href="<?php echo Url::to(['/movimento-caixa/consultas'])?>"> Movimentação Caixa</a></li>
+                            <li><a href="<?php echo Url::to(['/movimento-bancario/conextrato'])?>"> Extrato Bancário</a></li>
+                            <li><a href="<?php echo Url::to(['/movimento-bancario/consultas'])?>"> Movimentação Bancária</a></li>
+                            <li><a href="<?php echo Url::to(['/fluxo-caixa'])?>">Fluxo de Caixa</a></li>
+                        </ul>
+                    </li>
+                
                     <li>
                         <a href="#"><i class="fa fa-edit"></i> Contas a Pagar <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu">
@@ -300,18 +348,10 @@ $usuariosFoto=$out_foto;
                             <li><a href="<?php echo Url::to(['/conta-receber'])?>"> Listar e Incluir</a></li>
                             <li><a href="<?php echo Url::to(['/faturas-receber/faturas'])?>">Consulta de Faturas</a></li>
                             <li><a href="<?php echo Url::to(['/faturas-receber/faturas_pagas'])?>">Faturas Pagas</a></li>
+                            <li><a href="<?php echo Url::to(['/boletos/index'])?>">Consulta de Boletos</a></li>
                             <li><a href="<?php echo Url::to(['/faturas-receber/baixas'])?>">Baixa Contas Receber</a></li>
                             <li><a href="<?php echo Url::to(['/faturas-receber/coletivo'])?>">Baixa Coletiva</a></li>
                             <li><a href="<?php echo Url::to(['/faturas-receber/estorno'])?>">Estorno de Recebimento</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-edit"></i> Consultas <i class="fa fa-angle-left pull-right"></i></a>
-                        <ul class="treeview-menu">
-                            <li><a href="<?php echo Url::to(['/plano-contas/previsao'])?>"> Previsão de Contas</a></li>
-                            <li><a href="<?php echo Url::to(['/movimento-caixa/conextrato'])?>"> Extrato de Caixa</a></li>
-                            <li><a href="<?php echo Url::to(['/movimento-caixa/consultas'])?>"> Movimentação Caixa</a></li>
-                            <li><a href="<?php echo Url::to(['/fluxo-caixa'])?>">Fluxo de Caixa</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -330,7 +370,7 @@ $usuariosFoto=$out_foto;
                         <li>
                             <a href="#"><i class="fa fa-edit"></i> Cadastros <i class="fa fa-angle-left pull-right"></i></a>
                             <ul class="treeview-menu">                                
-                                <li><a href="<?php echo Url::to(['/mobiliario'])?>"> Cadastro Empresa</a></li>
+                                <li><a href="<?php echo Url::to(['/empresa'])?>"> Cadastro Empresa</a></li>
                                 <li><span class="delimiter" style="color: #8aa4af; padding: 0px 0px 0px 15px;">---------------------------------------</span></li>
                                 <li><a href="<?php echo Url::to(['/usuarios'])?>"> Usuarios</a></li>
                             </ul>

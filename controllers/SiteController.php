@@ -9,6 +9,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\UserSenha;
+use app\models\Usuarios;
 
 class SiteController extends Controller
 {
@@ -50,7 +51,13 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-   		return $this->render('index');
+    	$usuario 		= Usuarios::find()->where(['id' => \Yii::$app->user->identity->usuarios_id])->one();
+    	
+    	if ($usuario->tipo_user == 2) {
+   			return $this->render('index_gerente');
+    	} else {
+    		return $this->render('index');
+    	}
     }
     
     public function actionLogin()
@@ -113,19 +120,17 @@ class SiteController extends Controller
     	$request = Yii::$app->request;
     	$model = new \app\modules\auth\models\UserSenha();
     
-    
     	if($request->isPost)
     	{
     		if($model->load($request->post()))
     		{
-    			$model->tipo_identify = $_REQUEST['UserSenha']['tipo_identify'];
-    			$model->inscmob = $_REQUEST['UserSenha']['inscmob'];
-    			$model->cnpj = $_REQUEST['UserSenha']['cnpj'];
-    			$model->cpf = $_REQUEST['UserSenha']['cpf'];
+    			$model->username = $_REQUEST['UserSenha']['username'];
     			$model->email = $_REQUEST['UserSenha']['email'];
     			if($model->lembrete()) {
-    				$model_user = \app\modules\auth\models\AuthUser::findByUsername($model->username);
-    				$this->redirect(['site/login']);
+    				if ($model->envioSenha()) {
+		    			$model_user = \app\modules\auth\models\AuthUser::findByUsername($model->username);
+		    			$this->redirect(['site/login']);
+    				}
     			}
     		}
     	}

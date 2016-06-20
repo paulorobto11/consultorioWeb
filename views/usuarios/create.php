@@ -1,11 +1,8 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Colaborador */
-
-$this->title = 'Criar Colaborador';
-$this->params['breadcrumbs'][] = ['label' => 'Colaborador', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Criar Usuario';
+$this->params['breadcrumbs'][] = ['label' => 'Usuario', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'Usuario';
 ?>
 
 <?= $this->render('_form', [

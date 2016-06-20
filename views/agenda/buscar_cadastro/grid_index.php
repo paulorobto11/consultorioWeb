@@ -19,30 +19,24 @@ $model = new Clientes();
     	    	'width'=>'10px',
     	    ],
     		[
-    			'attribute'=>'codigo',
-            	'header'=>'Codigo',
-            	'hAlign'=>'left',
-            	'vAlign'=>'middle',
-            	'width'=>'50px',
-			],
-    		[
     			'attribute'=>'nome',
             	'header'=>'Nome do Cliente',
             	'hAlign'=>'left',
             	'vAlign'=>'middle',
             	'width'=>'150px',
 			],
-    		[
+    			[
     			'attribute'=>'dtnascto',
-            	'header'=>'Nascimento',
-            	'hAlign'=>'left',
-            	'vAlign'=>'middle',
-            	'width'=>'50px',
+    			'header'=>'Nascimento',
+    			'hAlign'=>'center',
+    			'vAlign'=>'middle',
+    			'width'=>'50px',
     			'value' => function($data){
-    					$funcoes = new Funcoes();
-    					return $funcoes->ajustaData($data->dtnascto);
-    				}
-			],
+    			$funcoes = new Funcoes();
+    			return $funcoes->ajustaData($data->dtnascto);
+    			}
+    			],
+    			 
     		[
     			'attribute'=>'fone',
             	'header'=>'Telefone',
@@ -56,18 +50,20 @@ $model = new Clientes();
             	
 			],
     		[
-    			'attribute'=>'celular',
-            	'header'=>'Celular',
+    			'attribute'=>'dataultima',
+            	'header'=>'Ultima Consulta',
             	'hAlign'=>'center',
             	'vAlign'=>'middle',
             	'width'=>'50px',
     			'value' => function($data){
-		    			$funcoes = new Funcoes();
-		    			return $funcoes->mascaraFone($data->celular);
+    					$funcoes = new Funcoes();
+    					return $funcoes->ajustaData($data->dataultima);
     				}
 			],
+			
+			
 			[
-			'attribute' => 'Ação',
+			'attribute' => 'Consulta',
 			'format' => 'raw',
 			'vAlign'=>'middle',
 					'hAlign'=>'center',
@@ -76,9 +72,23 @@ $model = new Clientes();
 			'value'=>function ($model, $key, $index, $widget) {
 					$url = '';
 					$html = '';
-					$html.= Html::button('', ['onclick'=>'entra_dados('.$model->codigo.')','class' => 'glyphicon glyphicon-ok-circle btn btn-primary']);
+					$html.= Html::button('', ['onclick'=>'entra_dados('.$model->codigo.',"1")','class' => 'glyphicon glyphicon-ok-circle btn btn-primary']);
 					return $html;
 				},
+			],
+			[
+			'attribute' => 'Retorno',
+			'format' => 'raw',
+			'vAlign'=>'middle',
+			'hAlign'=>'center',
+			'width'=>'40px',
+			'contentOptions' => ['style' => 'width:40px;'],
+			'value'=>function ($model, $key, $index, $widget) {
+			$url = '';
+			$html = '';
+			$html.= Html::button('', ['onclick'=>'entra_dados("'.$model->codigo.'","2")','class' => 'glyphicon glyphicon-refresh btn btn-primary']);
+			return $html;
+			},
 			]
 				
     			 

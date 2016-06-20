@@ -59,8 +59,8 @@ $config = [
        		'transport' => [
         				'class' => 'Swift_SmtpTransport',
         				'host' => 'smtp.gmail.com',
-        				'username' => 'naoresponda@cpninformatica.com.br',
-        				'password' => 'cpn#2010',
+        				'username' => 'paulorobto11@gmail.com',
+        				'password' => 'windows@3456',
         				'port' => '465',
         				'encryption' => 'ssl',
         		],        		

@@ -15,14 +15,14 @@ $this->params['page']['titleSmall'] = 'seja bem vindo';
 <!-- Small boxes (Stat box) -->
 <div class="row">
 	<div class="col-lg-3 col-xs-6">
-	<!-- small box -->
-		<div class="small-box bg-aqua-gradient">
+		<!-- small box -->
+		<div class="small-box bg-red-gradient">
 			<div class="inner">
 				<h3>5</h3>
-				<p>Vendas efetuadas hoje</p>
+				<p>Consultas Agendadas para Hoje</p>
 			</div>
 			<div class="icon">
-				<i class="ion ion-bag"></i>
+				<i class="ion ion-person-add"></i>
 			</div>
 			<a href="#" class="small-box-footer">Visualizar <i class="fa fa-arrow-circle-right"></i></a>
 		</div>
@@ -33,7 +33,7 @@ $this->params['page']['titleSmall'] = 'seja bem vindo';
 		<div class="small-box bg-yellow-gradient">
 			<div class="inner">
 				<h3>2</h3>
-				<p>Novos clientes</p>
+				<p>Novos Pacientes</p>
 			</div>
 			<div class="icon">
 				<i class="ion ion-person-add"></i>
