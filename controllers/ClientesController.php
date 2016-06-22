@@ -46,12 +46,56 @@ class ClientesController extends Controller
     		return $this->redirect(Yii::$app->user->loginUrl);
     	}
     	
+    	$funcoes = new Funcoes();
+    	 
+    	$arr_clientes = Clientes::findAll(['codigo' => '5328']);
+//     	echo "<pre>";
+//     	print_r ($arr_clientes);
+//     	exit();
+    	 
+//     	$transaction = \Yii::$app->db->beginTransaction();
+//     	try {
+//     		foreach ($arr_clientes as $clientes) {
+//     			echo strtoupper($clientes->nome);
+//     			$nome = str_replace('Ç', 'ç', $clientes->nome);
+//     			$nome = str_replace('ã', 'Ã', $nome);
+    			 
+//     			$clientes->nome =  $nome;
+    			
+//     			if (!$flag = $clientes->save(false)) {
+//     				$transaction->rollBack();
+//     				break;
+//     			}
+    			
+//     			echo "<pre>";
+//     			print_r ($clientes);
+//     			exit();
+//     		}
+    		
+//     		$transaction->commit();
+//     	} catch (Exception $e) {
+//     		$transaction->rollBack();
+//     		echo $e->getMessage();
+//     		exit;
+//     	}
+    	
+//     	exit();
+    	 
+    	
     	if (isset($_REQUEST['filtros'])) {
 	    	$model->bsc_data_inicio	 = $_REQUEST['bsc_data_inicio'];
 	    	$model->bsc_data_final 	 = $_REQUEST['bsc_data_final'];
 	    	$model->bsc_cliente		 = $_REQUEST['bsc_cliente'];
 	    	$model->bsc_tipo	 	 = $_REQUEST['bsc_tipo'];
 	    	$model->bsc_forma 		 = $_REQUEST['bsc_forma'];
+	    	
+	    	$model_cliente = [];
+	    	 
+	    	if (!empty($_REQUEST['bsc_cliente'])) {
+	    		$sql = 'SELECT * FROM clientes WHERE trim(nome) LIKE "'.$_REQUEST['bsc_cliente'].'%"';
+	    		$model_cliente = Clientes::findBySql($sql)->all();
+	    	}
+	    	
 	    	 
 	    	$params = [
 	    			'filtros' => '3',
@@ -60,6 +104,7 @@ class ClientesController extends Controller
 	    			'bsc_cliente' 		 => $_REQUEST['bsc_cliente'],
 	    			'bsc_tipo'		 	 => $_REQUEST['bsc_tipo'],
 	    			'bsc_forma' 		 => $_REQUEST['bsc_forma'],
+	    			'model_cliente' 	 => $model_cliente,
 	    	];
 	    	
 	        $searchModel = new ClientesSearch();

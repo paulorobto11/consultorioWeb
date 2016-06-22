@@ -57,6 +57,7 @@ class Clientes extends \yii\db\ActiveRecord
 	public $bsc_tipo;
 	public $bsc_cliente;
 	public $bsc_forma;
+	public $nome_cliente;
 	
     public static function tableName()
     {

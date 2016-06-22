@@ -74,9 +74,11 @@ class ClientesSearch extends Clientes
         				$codigo = '(';
         				foreach ($params['model_cliente'] as $clientes) {
         					$i++;
+        					if ($i > 20) break;
         					if ($i > 1) {
         						$codigo .= ',';
         					}
+        					
         					$codigo .= $clientes->codigo;
         				}
         				$codigo .= ')';
@@ -95,10 +97,24 @@ class ClientesSearch extends Clientes
         			}
         		}
         		if (isset($params['bsc_cliente'])) {
-        			if ($params['bsc_cliente']) {
-        				$query->where .= ' and codigo = '.$params['bsc_cliente'];
+        			if (!empty($params['model_cliente'])) {
+        				$i = 0;
+        				$codigo = '(';
+        				foreach ($params['model_cliente'] as $clientes) {
+        					$i++;
+        					if ($i > 20) break;
+        					if ($i > 1) {
+        						$codigo .= ',';
+        					}
+        					 
+        					$codigo .= $clientes->codigo;
+        				}
+        				$codigo .= ')';
+        		
+        				$query->where .= ' and codigo in '.$codigo;
         			}
         		}
+        		
         		if (isset($params['bsc_tipo'])) {
         			if ($params['bsc_tipo'] == '1') {
         				$query->where .= ' and tipo = 0';
@@ -129,7 +145,7 @@ class ClientesSearch extends Clientes
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         	'pagination' => [
-        			'pageSize' => 20,],
+        			'pageSize' => 200,],
         	'sort' => ['defaultOrder' => ['nome' => SORT_ASC]],
         ]);
 

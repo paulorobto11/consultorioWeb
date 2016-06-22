@@ -13,6 +13,10 @@ use app\models\Agenda;
 use app\models\Clientes;
 use app\models\AgendaData;
 use yii\helpers\Url;
+use app\models\Agencia;
+
+// $model_agenda = new Agenda();
+
 
 ?>
 
@@ -55,6 +59,8 @@ use yii\helpers\Url;
 							    
 							        <?
 							        //$model->bsc_data_agenda = date('d/m/Y');
+							        $funcoes = new Funcoes();
+							        $model_agenda->bsc_data_agenda = $funcoes->ajustaData($model_agenda->bsc_data_agenda);
 							      	echo  $form->field($model_agenda, 'bsc_data_agenda')->widget(DatePicker::classname(), [				        
 							            				'options' => ['placeholder' => 'dd/mm/yyyy',
 							            				'onchange' => 'alterar_data(this.value)',],

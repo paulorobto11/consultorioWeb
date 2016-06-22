@@ -45,14 +45,7 @@ use app\models\Contribuinte;
 					            <div class="col-md-6">                                                                                                                                
 					                <div class="form-group">                                                                                                                          
 						                <?php
-							                $model_clientes = Clientes::find()->all();
-							                $i = 0;
-							                $data = [];
-							                foreach ($model_clientes as $clientes) {
-							                	$data += [$clientes->codigo => $clientes->nome];
-							                }
-									                
-							                echo $form->field($model_agenda, 'nome_cliente')->textInput()->label('Nome do Cliente:');
+							                echo $form->field($model_agenda, 'nome_cliente')->textInput()->label('Nome do Paciente:');
 					                    ?>
 	                    	                    
 								    </div>

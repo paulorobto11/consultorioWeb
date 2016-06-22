@@ -54,7 +54,7 @@ class SiteController extends Controller
     	$usuario 		= Usuarios::find()->where(['id' => \Yii::$app->user->identity->usuarios_id])->one();
     	
     	if ($usuario->tipo_user == 2) {
-   			return $this->render('index_gerente');
+   			return $this->render('index');
     	} else {
     		return $this->render('index');
     	}

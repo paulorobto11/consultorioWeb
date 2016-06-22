@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<EnviarLoteRpsResposta xmlns="http://nfe.sjp.pr.gov.br/servico_enviar_lote_rps_resposta_v03.xsd" xmlns:ns2="http://nfe.sjp.pr.gov.br/tipos_v03.xsd" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#">
-  <NumeroLote>14568</NumeroLote>
-  <DataRecebimento>2015-11-05T06:39:43</DataRecebimento>
-  <Protocolo>53163</Protocolo>
-</EnviarLoteRpsResposta>

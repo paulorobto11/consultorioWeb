@@ -4,7 +4,7 @@ $(function(){
 function buscar_registros() {
 	bsc_data_inicio  = $('#clientes-bsc_data_inicio').val(); 
 	bsc_data_final   = $('#clientes-bsc_data_final').val();  
-	bsc_cliente      = $('#clientes-bsc_cliente').val();        
+	bsc_cliente      = $('#clientes-nome_cliente').val();        
 	bsc_tipo 	     = $('#clientes-bsc_tipo').val();   
 	bsc_forma        = $('#clientes-bsc_forma').val();         
 	

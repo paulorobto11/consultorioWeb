@@ -16,6 +16,8 @@ use app\models\Funcoes;
 use app\models\Horario;
 use app\models\Tempcon;
 use yii\helpers\Url;
+use app\models\TmpAgenda;
+use app\models\TmpAgendaSearch;
 
 date_default_timezone_set('America/Sao_Paulo');
 
@@ -62,6 +64,14 @@ class AgendaController extends Controller
         	$model->bsc_forma 		 = $_REQUEST['bsc_forma'];
         	$model->bsc_confirmada	 = $_REQUEST['bsc_confirmada'];
         	
+        	$model_cliente = [];
+        	
+        	if (!empty($_REQUEST['bsc_cliente'])) {
+        		$sql = 'SELECT * FROM clientes WHERE trim(nome) LIKE "'.$_REQUEST['bsc_cliente'].'%"';
+        		$model_cliente = Clientes::findBySql($sql)->all();
+        	} 
+        	 
+        	
         	$params = [
         			'filtros' => '1',
         			'bsc_data_inicio'	 => $_REQUEST['bsc_data_inicio'],
@@ -70,6 +80,8 @@ class AgendaController extends Controller
         			'bsc_tipo'		 	 => $_REQUEST['bsc_tipo'],
         			'bsc_forma' 		 => $_REQUEST['bsc_forma'],
         			'bsc_confirmada' 	 => $_REQUEST['bsc_confirmada'],
+        			'model_cliente' 	 => $model_cliente,
+        			 
         	];
         	 
         	$searchModel = new AgendaSearch();
@@ -123,6 +135,8 @@ class AgendaController extends Controller
     public function actionCreate()
     {
         $model = new Agenda();
+        $funcoes = new Funcoes();
+        
         
         if (!isset(Yii::$app->user->identity)) {
         	return $this->redirect(Yii::$app->user->loginUrl);
@@ -133,7 +147,7 @@ class AgendaController extends Controller
 	         
 	        $model_agenda = new Agenda();
 	        $model_agenda->bsc_medico = isset($_REQUEST['medico'])?$_REQUEST['medico']:Yii::$app->user->identity->medico_id;
-	        $model_agenda->bsc_data_agenda = isset($_REQUEST['data'])?$_REQUEST['data']:date('d/m/Y');
+        	$model_agenda->bsc_data_agenda = isset($_REQUEST['data'])?$funcoes->inverteData($_REQUEST['data']):date('Y-m-d');
 	        
 	        $model_data = AgendaData::findOne(['medico'=>$model_agenda->bsc_medico]);
 	        $model_data->data_base = $funcoes->inverteData($model_agenda->bsc_data_agenda);
@@ -148,71 +162,26 @@ class AgendaController extends Controller
 	        	echo $e->getMessage();
 	        	exit;
 	        }
-	         
-	        $model = new Agenda();
-	        $searchModel = new HorarioSearch();
-	        $params = [
-	        		'filtros' => '1',
-	        		'bsc_medico' 	 => $model_agenda->bsc_medico,
-	        ];
-	        $dataProvider = $searchModel->search($params);
-	        return $this->renderAjax('grid_agenda', [
-	        		'model' 	  => $model,
-	        		'searchModel' => $searchModel,
-	        		'dataProvider' => $dataProvider,
-	        ]);
-        }
-        
-        if (isset($_REQUEST['alterar_medico'])) {
+	        
+	        return $this->montar_agenda(1,$model_agenda->bsc_medico,$model_agenda->bsc_data_agenda,2);
+        } else if (isset($_REQUEST['alterar_medico'])) {
         	$funcoes = new Funcoes();
         
         	$model_agenda = new Agenda();
         	$model_agenda->bsc_medico = isset($_REQUEST['medico'])?$_REQUEST['medico']:Yii::$app->user->identity->medico_id;
-        	$model_agenda->bsc_data_agenda = isset($_REQUEST['data'])?$_REQUEST['data']:date('d/m/Y');
+        	$model_agenda->bsc_data_agenda = isset($_REQUEST['data'])?$funcoes->inverteData($_REQUEST['data']):date('Y-m-d');
         	
         	Yii::$app->session->set('user.medico_id',$model_agenda->bsc_medico);
-        	 
-        	$model_data = AgendaData::findOne(['medico'=>$model_agenda->bsc_medico]);
-        	if (empty($model_data)) {
-        		$model_data = new AgendaData();
-        		$model_data->id = '';
-        		$model_data->medico = $model_agenda->bsc_medico;
-        	}
-        	$model_data->data_base = $funcoes->inverteData($model_agenda->bsc_data_agenda);
-        	$transaction = \Yii::$app->db->beginTransaction();
-        	try {
-        		if (!$flag = $model_data->save(false)) {
-        			$key = 1;
-        		}
-        		$transaction->commit();
-        	} catch (Exception $e) {
-        		$transaction->rollBack();
-        		echo $e->getMessage();
-        		exit;
-        	}
-        
-        	$model = new Agenda();
         	
-        	$params = [
-        			'filtros' => '1',
-        			'bsc_medico' 	 => $model_agenda->bsc_medico,
-        	];
-        	$searchModel = new HorarioSearch();
-        	$dataProvider = $searchModel->search($params);
-        	return $this->renderAjax('grid_agenda', [
-        			'model' 	  => $model,
-        			'searchModel' => $searchModel,
-        			'dataProvider' => $dataProvider,
-        	]);
-        }
-        
-
-        if (isset($_REQUEST['enviar_consulta'])) {
+        	return $this->montar_agenda(1,$model_agenda->bsc_medico,$model_agenda->bsc_data_agenda,2);        	
+        	 
+        } else if (isset($_REQUEST['enviar_consulta'])) {
 	        $funcoes = new Funcoes();
 	         
 	        $model_agenda = new Agenda();
 	        $model_agenda->bsc_medico = $_REQUEST['bsc_medico'];
 	        $model_agenda->bsc_data_agenda = $_REQUEST['bsc_data'];
+	        
 	        
 	        $model_temp = Tempcon::findOne(['medico'=>$model_agenda->bsc_medico]);
 	        if (!empty($model_temp)) {
@@ -251,23 +220,48 @@ class AgendaController extends Controller
 	        	echo $e->getMessage();
 	        	exit;
 	        }
-	         
-	        $model = new Agenda();
-        	$params = [
-        			'filtros' => '1',
-        			'bsc_medico' 	 => $_REQUEST['bsc_medico'],
-        	];
+	        
+	        return $this->montar_agenda(1,$model_temp->medico,$model_temp->data,2);
+        } else if (isset($_REQUEST['apagar_consulta'])) {
+        	$funcoes = new Funcoes();
         	
-        	$searchModel = new HorarioSearch();
-        	$dataProvider = $searchModel->search($params);
-	        return $this->renderAjax('grid_agenda', [
-	        		'model' 	  => $model,
-	        		'searchModel' => $searchModel,
-	        		'dataProvider' => $dataProvider,
-	        ]);
-        }
-
-        if (isset($_REQUEST['excluir_consulta'])) {
+        	if (!isset(Yii::$app->user->identity)) {
+        		return $this->redirect(Yii::$app->user->loginUrl);
+        	}
+        
+        	$model_agenda = new Agenda();
+        	$model_agenda->bsc_medico = $_REQUEST['bsc_medico'];
+        	$model_agenda->bsc_data_agenda = $funcoes->inverteData($_REQUEST['bsc_data']);
+        	
+        	$agenda_dados = Agenda::findOne(['hora'=>$_REQUEST['id'],'medico'=>$model_agenda->bsc_medico,'data'=>$model_agenda->bsc_data_agenda]);
+        	if (empty($agenda_dados)) {
+        		echo '2';
+        		exit();
+        	}
+        	
+        	$transaction = \Yii::$app->db->beginTransaction();
+        	try {
+        		if (!$flag = $agenda_dados->delete(false)) {
+        			$key = 1;
+        		}
+        		
+        		$tmp_agenda = TmpAgenda::findOne(['id_hora'=>$_REQUEST['id'],'medico'=>$model_agenda->bsc_medico,'data'=>$model_agenda->bsc_data_agenda]);
+        		if (!empty($agenda_dados)) {
+        			if (!$flag = $tmp_agenda->delete(false)) {
+        				$key = 1;
+        			}
+        		}
+        		
+        		$transaction->commit();
+        	} catch (Exception $e) {
+        		$transaction->rollBack();
+        		echo $e->getMessage();
+        		exit;
+        	}
+        	
+       		return $this->montar_agenda(1,$model_agenda->bsc_medico,$model_agenda->bsc_data_agenda,2);
+        	
+        } else if (isset($_REQUEST['excluir_consulta'])) {
         	$funcoes = new Funcoes();
         
         	$model_agenda = new Agenda();
@@ -280,7 +274,7 @@ class AgendaController extends Controller
 	        
 	        	$data = $funcoes->inverteData($_REQUEST['bsc_data']);
 	        	$model_agenda = Agenda::findOne(['hora'=>$model_temp->hora,'medico'=>$model_temp->medico,'data'=>$model_temp->data]);
-	        	$model_agenda->confirmada = 0;
+	        	$model_agenda->confirmada = 1;
 	        	$transaction = \Yii::$app->db->beginTransaction();
 	        	try {
 	        		if (!$flag = $model_agenda->save(false)) {
@@ -294,26 +288,9 @@ class AgendaController extends Controller
 	        	}
         	}
         	
-        
-        	$model = new Agenda();
-        	
-        	$params = [
-        			'filtros' => '1',
-        			'bsc_medico' 	 => $_REQUEST['bsc_medico'],
-        	];
-        	
-        	$searchModel = new HorarioSearch();
-        	$dataProvider = $searchModel->search($params);
-        	return $this->renderAjax('grid_agenda', [
-        			'model' 	  => $model,
-        			'searchModel' => $searchModel,
-        			'dataProvider' => $dataProvider,
-        	]);
-        	exit();
-        }
-        
-        
-        if (isset($_REQUEST['salvar'])) {
+        	echo '0';
+
+        }  else if (isset($_REQUEST['salvar'])) {
         	if ($_REQUEST['salvar'] == 2) {
         		$funcoes = new Funcoes();
         		$codigo_cliente = Clientes::find()->count()+1;
@@ -411,69 +388,127 @@ class AgendaController extends Controller
         		echo $e->getMessage();
         		exit;
         	}
-        	
-        	$model = new Agenda();
-        	$model->bsc_data   = $model_agenda->data;
-        	$model->bsc_medico = $model_agenda->medico;
-        	$params = [
-        			'filtros' => '1',
-        			'bsc_medico' 	 => $_REQUEST['medico'],
-        	];
-        	$searchModel = new HorarioSearch();
-        	$dataProvider = $searchModel->search($params);
-        	return $this->renderAjax('grid_agenda', [
-        			'model' 	  => $model,
-        			'searchModel' => $searchModel,
-        			'dataProvider' => $dataProvider,
-        	]);
-        }
-        
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-        	
-        	$funcoes = new Funcoes();
-
-        	$model_agenda = new Agenda();
-        	$model_agenda->bsc_medico = isset($_REQUEST['medico'])?$_REQUEST['medico']:Yii::$app->user->identity->medico_id;
-        	$model_agenda->bsc_data_agenda = isset($_REQUEST['data'])?$_REQUEST['data']:date('d/m/Y');
-        	
-            if (empty($_REQUEST)) {
-	        	$model_data = AgendaData::findOne(['medico'=>$model_agenda->bsc_medico]);
-	        	if (empty($model_data)) {
-	        		$model_data = new AgendaData();
-	        		$model_data->id = '';
-	        	}
-	        	$model_data->data_base = $funcoes->inverteData($model_agenda->bsc_data_agenda); 
-	        	$transaction = \Yii::$app->db->beginTransaction();
-	        	try {
-	        		if (!$flag = $model_data->save(false)) {
-	        			$key = 1;
-	        		}
-	        		$transaction->commit();
-	        	} catch (Exception $e) {
-	        		$transaction->rollBack();
-	        		echo $e->getMessage();
-	        		exit;
-	        	}
-            }
-        	 
-			$model       = new Horario();
-        	$params = [
-        			'filtros' => '1',
-        			'bsc_medico' 	 => $model_agenda->bsc_medico,
-        	];
-        	$searchModel = new HorarioSearch();
-        	$dataProvider = $searchModel->search($params);
-			return $this->render('create', [
-            		'model_agenda' => $model_agenda,
-                	'model' => $model,
-            		'searchModel' => $searchModel,
-            		'dataProvider' => $dataProvider,
-            		
-            ]);
-        }
+        	return $this->montar_agenda(1,$model_agenda->medico,$model_agenda->data,2);
+        } else { //if (empty($_REQUEST)) {
+//         	echo 'aaaa';
+//         	exit();
+       		$forma    = 1;
+       		$medico   = isset($_REQUEST['medico'])?$_REQUEST['medico']:Yii::$app->user->identity->medico_id;
+       		$data	  = $funcoes->inverteData(isset($_REQUEST['data'])?$_REQUEST['data']:date('d/m/Y'));
+       		$tipo	  = 1;
+       		return $this->montar_agenda($forma,$medico,$data,$tipo);
+       	} 
+       	/*else {
+       		echo "<pre>ZZZZ";
+       		print_r ($_REQUEST);
+       		echo 'bbbb';
+       		exit();
+       		 
+       		$forma    = 2;
+       		$medico   = Yii::$app->user->identity->medico_id;
+       		$data	  = date('Y-m-d');
+       		$tipo     = 2;
+       		return $this->montar_agenda($forma,$medico,$data,$tipo);
+       	}*/
+    }
+    
+    public function montar_agenda($forma,$medico,$data,$tipo) {
+    	$funcoes = new Funcoes();
+    	
+    	$model_agenda = new Agenda();
+    	$model_agenda->bsc_medico 		= isset($medico)?$medico:Yii::$app->user->identity->medico_id;
+    	$model_agenda->bsc_data_agenda  = isset($data)?$data:date('Y-m-d');
+    	
+    	 
+    	if ($forma == 1) {
+    			TmpAgenda::deleteAll(['medico'=>$model_agenda->bsc_medico]);
+    			
+//     			echo "<pre>";
+//     			print_r ($model_agenda);
+//     			exit();
+    			 
+		    	$model_data = AgendaData::findOne(['medico'=>$model_agenda->bsc_medico]);
+		    	if (empty($model_data)) {
+		    		$model_data = new AgendaData();
+		    		$model_data->id = '';
+		    	}
+		    	
+		    	$model_data->medico = $model_agenda->bsc_medico;
+		    	$model_data->data_base = $model_agenda->bsc_data_agenda;
+		    	
+		    	$transaction = \Yii::$app->db->beginTransaction();
+		    	try {
+		    		if (!$flag = $model_data->save(false)) {
+		    			$key = 1;
+		    		}
+		    	
+		    		$model_hora = Horario::findAll(['medico'=>$model_agenda->bsc_medico]);
+		    		foreach ($model_hora as $horario) {
+		    			$agendar_dados = Agenda::findOne(['medico'=>$horario->medico, 'hora'=> $horario->id, 'data'=> $model_data->data_base]);
+		    			$tmp_agenda 		= new TmpAgenda();
+		    			$tmp_agenda->id     = '';
+		    			$tmp_agenda->medico = $horario->medico;
+		    			$tmp_agenda->id_hora = $horario->id;
+		    			$tmp_agenda->hora   = $horario->hora;
+		    			$tmp_agenda->data   = $model_data->data_base;
+		    			 
+		    			if (!empty($agendar_dados)) {
+		    				$model_cliente = Clientes::findOne(['codigo'=>$agendar_dados->codigo]);
+		    				$tmp_agenda->codigo     = $agendar_dados->codigo;
+		    				$tmp_agenda->nome       = $model_cliente->nome;
+		    				$tmp_agenda->provisorio = $model_cliente->tipo;
+		    				$tmp_agenda->fone	    = $model_cliente->fone;
+		    				$tmp_agenda->tipo       = $agendar_dados->tipo;
+		    				$tmp_agenda->vlrpgto    = $agendar_dados->vlrpgto?$agendar_dados->vlrpgto:'0.00';
+		    				$tmp_agenda->modopgto   = $agendar_dados->modopgto;
+		    				$tmp_agenda->confirmada = $agendar_dados->confirmada;
+		    			} else {
+		    				$tmp_agenda->nome       = '';
+		    				$tmp_agenda->fone	    = '';
+		    				$tmp_agenda->vlrpgto    = '';
+		    				$tmp_agenda->modopgto   = '';
+		    				$tmp_agenda->confirmada = 0;
+		    				 
+		    			}
+		    			 
+		    			if (!$flag = $tmp_agenda->save(false)) {
+		    				$key = 1;
+		    			}
+		    		}
+		    		$transaction->commit();
+		    	} catch (Exception $e) {
+		    		$transaction->rollBack();
+		    		echo $e->getMessage();
+		    		exit;
+		    	}
+    		}
+    	
+    	$model       = new Horario();
+    	$params = [
+    			'filtros' => '1',
+    			'bsc_medico' 	 => $model_agenda->bsc_medico,
+    	];
+    	 
+    	if ($tipo == 1) {
+	    	$searchModel = new TmpAgendaSearch();
+	    	$dataProvider = $searchModel->search($params);
+	    	return $this->render('create', [
+	    			'model_agenda' 	=> $model_agenda,
+	    			'model' 		=> $model,
+	    			'searchModel' 	=> $searchModel,
+	    			'dataProvider' 	=> $dataProvider,
+	    			 
+	    	]);
+    	} else {
+    		$searchModel = new TmpAgendaSearch();
+    		$dataProvider = $searchModel->search($params);
+    		return $this->renderAjax('grid_agenda', [
+    				'model' 	  => $model,
+    				'searchModel' => $searchModel,
+    				'dataProvider' => $dataProvider,
+    		]);
+    	}
+    	 
     }
     
     public function actionEnviar() {
@@ -564,15 +599,8 @@ class AgendaController extends Controller
     		echo $e->getMessage();
     		exit;
     	}
-    	 
-    	$model = new Agenda();
-    	$searchModel = new HorarioSearch();
-    	$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-    	return $this->renderAjax('grid_agenda', [
-    			'model' 	  => $model,
-    			'searchModel' => $searchModel,
-    			'dataProvider' => $dataProvider,
-    	]);
+    	
+    	return $this->montar_agenda(1,$model_agenda->medico,$model_agenda->data,2);
     	 
     }
 
@@ -675,14 +703,19 @@ class AgendaController extends Controller
     	$model_agenda->bsc_data	 = $funcoes->inverteData($_REQUEST['bsc_data']);
     	$model_agenda->bsc_cliente  = $_REQUEST['bsc_cliente'];
     	
-    	$sql = 'SELECT * FROM CLIENTES WHERE NOME LIKE "'.$_REQUEST['bsc_cliente'].'%"';
-    	$model_cliente = Clientes::findBySql($sql)->all();
-    	
-    	$params = [
-    			'filtros' => '2',
-    			'bsc_data'	 => $_REQUEST['bsc_data'],
-    			'model_cliente' 	 => $model_cliente,
-    	];
+    	if (!empty($_REQUEST['bsc_cliente'])) {
+	    	$sql = 'SELECT * FROM clientes WHERE NOME LIKE "'.$_REQUEST['bsc_cliente'].'%"';
+	    	$model_cliente = Clientes::findBySql($sql)->all();
+	    	$params = [
+	    			'filtros' => '2',
+	    			'bsc_data'	 => $_REQUEST['bsc_data'],
+	    			'model_cliente' 	 => $model_cliente,
+	    	];
+    	} else {
+    		$params = [
+    				'filtros' => '5',
+    		];
+    	}
     	
     	$searchModel = new ClientesSearch();
     	$dataProvider = $searchModel->search($params);
@@ -734,7 +767,9 @@ class AgendaController extends Controller
     	]);
     }
     
-    
+    public function actionVer() {
+    	
+    }
     
 
     public function actionProvisorio() {

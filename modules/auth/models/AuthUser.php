@@ -5,6 +5,8 @@ namespace app\modules\auth\models;
 use Yii;
 use yii\helpers\Json;
 use yii\web\IdentityInterface;
+use app\models\Usuarios;
+use app\models\Empresa;
 
 /**
  * This is the model class for table "auth_user".
@@ -128,7 +130,7 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
     {        
        if($this->id)
        {
-           $model = \app\models\Usuarios::find()->where(['user_id'=>$this->id])->one();
+           $model = Usuarios::find()->where(['user_id'=>$this->id])->one();
 		   
            if($model != NULL)
            {
@@ -177,7 +179,7 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
     {
     	if($this->id)
     	{
-    		$model = \app\models\Usuarios::find()->where(['id'=>$value])->one();
+    		$model = Usuarios::find()->where(['id'=>$value])->one();
     		 
     		if($model != NULL)
     		{
@@ -203,8 +205,8 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
     public function setEmpresa($value)
     {
     	
-    	$model_usuario = \app\models\Usuarios::find()->where(['user_id'=>$value])->one();
-        $model = \app\models\Empresa::find()->where(['id'=>$model_usuario->empresa_id])->one();
+    	$model_usuario = Usuarios::find()->where(['user_id'=>$value])->one();
+        $model = Empresa::find()->where(['id'=>$model_usuario->empresa_id])->one();
 
         $empresa = [];
 
@@ -371,7 +373,7 @@ class AuthUser extends \yii\db\ActiveRecord implements IdentityInterface
         if($_user != NULL)
         {
         	$model_usuarios = [];
-             $model_usuarios=\app\models\usuarios::find()
+             $model_usuarios= Usuarios::find()
                ->where(['id'=>$entity])
                 ->one();
         	    

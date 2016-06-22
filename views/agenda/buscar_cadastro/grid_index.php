@@ -101,7 +101,7 @@ $model = new Clientes();
     	echo GridView::widget([
     		'dataProvider'=>$dataProvider,
     		'columns'=>$gridColumns,
-    		'containerOptions'=>['style'=>'overflow: auto'], // only set when responsive = false
+    		'containerOptions'=> false, //['style'=>'overflow: auto'], // only set when responsive = false
     		'headerRowOptions'=>['class'=>'kartik-sheet-style'],
     		'filterRowOptions'=>['class'=>'kartik-sheet-style'],
     		'pjax'=>true,
@@ -110,7 +110,7 @@ $model = new Clientes();
     					'content'=> Html::button('Novo Cadastro', ['onclick'=>'novo_cadastro("'.$model_agenda->hora.'","'.$model_agenda->medico.'")','class' => 'btn btn-danger'])
     			],
     		],
-    		'bordered'=>true,
+    		'bordered'=>false,
     		'striped'=>true,
     		'condensed'=>true,
     		'responsive'=>false,
@@ -119,7 +119,7 @@ $model = new Clientes();
     			'type'=>GridView::TYPE_PRIMARY,
     			'heading'=> 'Lista de Cadastro de Clientes',
     		],
-    		'persistResize'=>false,
+    		'persistResize'=>true,
     	]);
     	
     	Pjax::end();

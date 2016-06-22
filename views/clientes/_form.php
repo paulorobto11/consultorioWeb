@@ -231,7 +231,8 @@ use app\models\Convenio;
 		    								<div class="row">
 		    								    <?php
 	    								           $_path=Url::to([\Yii::$app->params['dir']['fotos']['fotos']]);
-		    								       $foto = $model->foto ?  $_path.'/'.$model->foto : '';
+	    								           $model->foto = $model->foto ?  $model->foto : 'default_paciente.png';
+		    								       $foto = $_path.'/'.$model->foto;
 		    								       $imagem = $model->foto ? '<img src="'.$foto.'"':'&lt;&lt; Inserir a Foto do Cliente &gt;&gt;';
 		    								    ?>
 		    									<div id="results" style='background:#063E6F;text-align:center;color:#fff'><?=$imagem?></div>

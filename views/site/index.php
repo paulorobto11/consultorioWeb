@@ -34,7 +34,7 @@ if (!empty($model_cliente)) {
 	$qtde_cliente = count($model_cliente);
 }
 
-$sql = 'SELECT * FROM AGENDA WHERE medico = '.Yii::$app->user->identity->medico_id.' and EXTRACT(YEAR_MONTH FROM DATA ) = "'.date('Ym').'" and confirmada = 2';
+$sql = 'SELECT * FROM consultas WHERE medico = '.Yii::$app->user->identity->medico_id.' and EXTRACT(YEAR_MONTH FROM DATA ) = "'.date('Ym').'"';
 $model_consultas = Agenda::findBySql($sql)->all();
 $qtde_consultas = 0;
 if (!empty($model_consultas)) {
@@ -53,7 +53,7 @@ if (!empty($contas_pagar)) {
 	$qtde_pagar = count($contas_pagar);
 }
 
-$sql = 'SELECT * FROM PAGCON WHERE medico = '.Yii::$app->user->identity->medico_id.' and EXTRACT(YEAR_MONTH FROM DATA ) = "'.date('Ym').'" and situacao = 1';
+$sql = 'SELECT * FROM pagcon WHERE medico = '.Yii::$app->user->identity->medico_id.' and EXTRACT(YEAR_MONTH FROM DATA ) = "'.date('Ym').'" and situacao = 1';
 $model_pagcon = Pagcon::findBySql($sql)->all();
 $qtde_receitas = '0';
 if (!empty($model_pagcon)) {

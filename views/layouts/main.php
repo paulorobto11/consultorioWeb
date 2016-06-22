@@ -73,9 +73,11 @@ $usuariosFoto=$out_foto;
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 
+
 <div class="loading-fog text-center" id="loading-fog"  style="padding-top: 50px;">  
     <div class="cssload-loader text-center"><p>Carregando</p></div>
 </div>
+
 
 <?php $this->beginBody() ?>
 
@@ -407,7 +409,7 @@ $usuariosFoto=$out_foto;
 
 
     <footer class="main-footer">
-        PREFEITURA - &copy; ISSONLINE <?= date('Y') ?>
+        CONSULTORIO - &copy; MEDICO <?= date('Y') ?>
     </footer>
 </div>
 

@@ -30,13 +30,18 @@ use app\models\Funcoes;
 				        		<div class="box box-primary" style="overflow:hidden">
 				                	<div class="box-body box-profile">
 						    			<?php
-					    					$_path=Url::to([\Yii::$app->params['dir']['fotos']['fotos']]);
+						    			$_path=Url::to([\Yii::$app->params['dir']['fotos']['fotos']]);
+						    			$model->foto = $model->foto ?  $model->foto : 'default_paciente.png';
+						    			$foto = $_path.'/'.$model->foto;
+						    			$imagem = $model->foto ? '<img src="'.$foto.'"':'&lt;&lt; Inserir a Foto do Cliente &gt;&gt;';
+						    			 
+// 					    					$_path=Url::to([\Yii::$app->params['dir']['fotos']['fotos']]);
 					    					
-						    				$foto = $model->foto ?  $_path.'/'.$model->foto : '';
-						    				$imagem = $model->foto ? '<img src="'.$foto.'"':'&lt;&lt; Inserir a Foto do Cliente &gt;&gt;';
+// 						    				$foto = $model->foto ?  $_path.'/'.$model->foto : '';
+// 						    				$imagem = $model->foto ? '<img src="'.$foto.'"':'&lt;&lt; Inserir a Foto do Cliente &gt;&gt;';
 						    			?>
 				                		<div id='dv_results'>
-				                        	<img class="profile-user-img img-responsive img-circle"  style='height: 120px; margin:10px;width:200px' id="results" src="<?=$foto?>" alt="Foto">
+				                        	<img class="profile-user-img img-responsive img-circle"  style='height:120px; margin:10px;width:160px' id="results" src="<?=$foto?>" alt="Foto">
 				                        </div>
 				                  	</div><!-- /.box-body -->
 				                </div>	

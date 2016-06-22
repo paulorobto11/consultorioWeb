@@ -4,7 +4,7 @@ $(function(){
 function buscar_registros() {
 	bsc_data_inicio  = $('#agenda-bsc_data_inicio').val(); 
 	bsc_data_final   = $('#agenda-bsc_data_final').val();  
-	bsc_cliente      = $('#agenda-bsc_cliente').val();        
+	bsc_cliente      = $('#agenda-nome_cliente').val();        
 	bsc_tipo 	     = $('#agenda-bsc_tipo').val();   
 	bsc_forma        = $('#agenda-bsc_forma').val();         
 	bsc_confirmada   = $('#agenda-bsc_confirmada').val();  
@@ -400,10 +400,10 @@ function excluir_agendamento(id) {
 	bsc_data       = $('#agenda-bsc_data_agenda').val();
 
 	if (confirm('Confirma a Exclusão do Agendamento deste Paciente ?')) {
-		return $.ajax({
+		$.ajax({
 			 type: 'post',
-			 url: BASE_PATH + "agenda/excluir_consulta",
-			  data: {id: id,
+			 url: BASE_PATH + "agenda/create",
+			  data: {apagar_consulta:1, id:id,
 				  bsc_medico:bsc_medico,
 				  bsc_data  :  bsc_data ,      
 			  }, 
@@ -414,6 +414,18 @@ function excluir_agendamento(id) {
 			       alert("Erro na Abertura de Tela - Verifique !!!");
 			  },
 		});
+		
+		return $.ajax({
+			 type: 'post',
+			 url: BASE_PATH + "agenda/create",
+		      success:function(result){
+			   		  $("#div_grid").html(result);
+		      },
+			  error: function(data) { // if error occured
+			       alert("Erro na Abertura de Tela - Verifique !!!");
+			  },
+		});
+		
 	}
 	
 }

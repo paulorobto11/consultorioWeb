@@ -163,4 +163,12 @@ class Funcoes extends \yii\db\ActiveRecord
 		$valor = $nro1.'-'.$nro2.'/'.$nro3;
 		return $valor;
 	}
+	
+	public function replace_nome($nome) {
+//		$nome = utf8_encode($nome);
+		$nome = str_replace('ç', 'Ç', $nome);
+		$nome = str_replace('ã', 'Ã', $nome);
+		return $nome;
+		
+	}
 }

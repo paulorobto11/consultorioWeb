@@ -55,7 +55,7 @@ class AgendaSearch extends Agenda
 	        	$query->where = '1=1 and medico = '.Yii::$app->user->identity->medico_id;
 		        if (isset($params['bsc_confirmada'])) {
 		        	if ($params['bsc_confirmada'] == 1) {
-		        		$query->where .= ' and confirmada = 0';
+		        		$query->where .= ' and confirmada = 1';
 		        	}
 		        	if ($params['bsc_confirmada'] == 2) {
 		        		$query->where .= ' and confirmada = 2';
@@ -67,9 +67,28 @@ class AgendaSearch extends Agenda
 		        	}
 		        }
 		        if (isset($params['bsc_cliente'])) {
-		        	if ($params['bsc_cliente']) {
-		        		$query->where .= ' and codigo = '.$params['bsc_cliente'];
+		        	if (isset($params['model_cliente'])) {
+		        		if (!empty($params['model_cliente'])) {
+		        			$i = 0;
+		        			$codigo = '(';
+		        			foreach ($params['model_cliente'] as $clientes) {
+		        				$i++;
+		        				if ($i > 30) break;
+		        				if ($i > 1) {
+		        					$codigo .= ',';
+		        				}
+		        				 
+		        				$codigo .= $clientes->codigo;
+		        			}
+		        			$codigo .= ')';
+		        	
+		        			$query->where .= ' and codigo in '.$codigo;
+		        		}
 		        	}
+		        	 
+// 		        	if ($params['bsc_cliente']) {
+// 		        		$query->where .= ' and codigo = '.$params['bsc_cliente'];
+// 		        	}
 		        }
 		        if (isset($params['bsc_tipo'])) {
 		        	if ($params['bsc_tipo']) {
@@ -83,11 +102,14 @@ class AgendaSearch extends Agenda
 		        }
 	        }
 	        
-// 	                	echo "<pre>";
+// 	              	echo "<pre>";
 // 	                	print_r ($query);
 // 	                	exit();
 	        	    
+	        
+	        	    
         }
+        
         
         $dataProvider = new ActiveDataProvider([
         		'query' => $query,
